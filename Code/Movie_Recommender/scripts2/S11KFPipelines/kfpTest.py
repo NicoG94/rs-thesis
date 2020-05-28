@@ -37,3 +37,8 @@ def addComp(ctx: str) -> str:
            auth_token)  # adding the address to intermediate result to context string
     context["sum"] = "example.com/address/of/sum"
     return context
+
+
+
+import kfp.dsl as dsl
+dsl.ContainerOp()
