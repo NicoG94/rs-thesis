@@ -1,0 +1,2 @@
+"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\django_venv\Scripts"
+activate

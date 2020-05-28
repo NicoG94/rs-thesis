@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movierecommender</title>
+</head>
+
+<style>
+body {
+  background-image: url('https://miro.medium.com/max/974/1*bjwneu_gsAO9WSKRg2DjNw.jpeg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+a {
+    position: absolute;
+    top: 20%;
+    left: 30%;
+}
+.button {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 24px;
+    border: 1px solid #d6c122;
+    border-radius: 8px;
+    background: #e6e627;
+    background: -webkit-gradient(linear, left top, left bottom, from(#e6e627), to(#d6d62b));
+    background: -moz-linear-gradient(top, #e6e627, #d6d62b);
+    background: linear-gradient(to bottom, #e6e627, #d6d62b);
+    font: normal normal bold 20px arial;
+    color: #eeeeee;
+    text-decoration: none;
+}
+
+.button:hover,
+.button:focus {
+    border: 1px solid #f6de27;
+    background: #ffff2f;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffff2f), to(#ffff34));
+    background: -moz-linear-gradient(top, #ffff2f, #ffff34);
+    background: linear-gradient(to bottom, #ffff2f, #ffff34);
+    color: #ffffff;
+    text-decoration: none;
+}
+.button:active {
+    background: #8a8a17;
+    background: -webkit-gradient(linear, left top, left bottom, from(#8a8a17), to(#d6d62b));
+    background: -moz-linear-gradient(top, #8a8a17, #d6d62b);
+    background: linear-gradient(to bottom, #8a8a17, #d6d62b);
+}
+
+
+
+</style>
+
+<!-- http://buttonoptimizer.com/
+ -->
+<a class="button" href="{% url 'rating' %}">Explore movie recommendations personalised to your taste</a>
+
+
+<body>
+<br><br>
+
+
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+Website: 
+	Prio1:
+		mehr Filme
+	Prio2:
+		Sterne umdrehen
+		Kasten weg
+		prevent browser from scrolling to top when clicking input
