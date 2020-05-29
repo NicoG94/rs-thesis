@@ -10,15 +10,22 @@ import kfp_server_api
 import kfp.components as comp
 import json
 
-HOME=r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\Movie_Recommender"
+HOME=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender"
 
 from scripts2.S01Datenbeschaffung.mergeData import get_coll_filt_data
 from scripts2.S03DataPreparation.pivotData import get_pivot_data
 from scripts2.S04Modelling.surprise2 import train_algo
 
 ####### pipeline operations #######
-get_data_op = comp.func_to_container_op(get_coll_filt_data)
-pivot_data_op = comp.func_to_container_op(get_pivot_data)
+def get_packages():
+    f = open(HOME+'/scripts2/S12Docker/requirements.txt', 'r+')
+    lines = [line.replace("\n", "") for line in f.readlines()]
+    lines = [line.split("==")[0] for line in lines]
+    f.close()
+    return lines
+packages = get_packages()
+get_data_op = comp.func_to_container_op(get_coll_filt_data, packages_to_install=packages)
+pivot_data_op = comp.func_to_container_op(get_pivot_data, packages_to_install=packages)
 train_algo_op = comp.func_to_container_op(train_algo)
 
 ####### create pipeline function #######
@@ -46,6 +53,7 @@ compiler.Compiler().compile(pipeline_func=rs_kfp,
                           package_path=pipeline_filename)
 
 
+r"""
 ####### create / reuse experiment #######
 host="http://10.10.10.10:8080/"
 host="ml-pipeline.kubeflow.svc.cluster.local:8888"
@@ -69,3 +77,4 @@ run_name = rs_kfp.__name__ + " run"
 run_result = client.run_pipeline(experiment.id, run_name, pipeline_filename)
 
 print(run_result)
+"""
