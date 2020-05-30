@@ -16,7 +16,7 @@ def train_recommender_model():
         image = 'rsthesis/get_data_image:latest', #docker location in registry
         #arguments = [context], # passing context as argument
         file_outputs = {
-            'context': '/output.txt' #name of the file with result
+            'context': '/blob_path.txt' #name of the file with result
         }
     )
     prepare_data_op = dsl.ContainerOp(
@@ -24,7 +24,7 @@ def train_recommender_model():
         image = 'rsthesis/prepare_data_image:latest', #docker location in registry
         arguments = [get_data_op], #get_data_op.output, # passing step_1.output as argument
         file_outputs = {
-            'context': '/output.txt' #name of the file with result
+            'context': '/blob_path.txt' #name of the file with result
         }
    )
 
