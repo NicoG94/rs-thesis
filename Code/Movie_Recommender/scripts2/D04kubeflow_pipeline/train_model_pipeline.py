@@ -3,15 +3,15 @@ from kfp.dsl import pipeline
 
 # defining pipeline meta
 @pipeline(
-    name='Calculate Average',
-    description='This pipeline calculates average'
+    name='Train recommender modell',
+    description='Train recommender modell pipeline'
 )
 # stitch the steps
-def train_recommender_modell():
+def train_recommender_model():
     # importing container operation
     import kfp.dsl as dsl
 
-    step_1 = dsl.ContainerOp(
+    get_data_op = dsl.ContainerOp(
         name = 'get_data', # name of the operation
         image = 'rsthesis/get_data_image:latest', #docker location in registry
         #arguments = [context], # passing context as argument
@@ -19,10 +19,10 @@ def train_recommender_modell():
             'context': '/output.txt' #name of the file with result
         }
     )
-    step_2 = dsl.ContainerOp(
+    prepare_data_op = dsl.ContainerOp(
         name = 'get_data', # name of operation
         image = 'rsthesis/get_data_image:latest', #docker location in registry
-        arguments = step_1.output, # passing step_1.output as argument
+        arguments = get_data_op.output, # passing step_1.output as argument
         file_outputs = {
             'context': '/output.txt' #name of the file with result
         }

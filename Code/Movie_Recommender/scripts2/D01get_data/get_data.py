@@ -1,13 +1,10 @@
 import pandas as pd
 
-a = pd.DataFrame({"A":[1,2]})
-print(a)
-print("print success")
-a.to_csv("csv_test_success.csv")
+def get_data2():
+    a = pd.DataFrame({"A":[1,2]})
+    return a
 
 
-import numpy as np
-b = np.array([0,1])
-print(b)
-
-import kfp
+if __name__ == "__main__":
+    b = get_data2()
+    print(b)
