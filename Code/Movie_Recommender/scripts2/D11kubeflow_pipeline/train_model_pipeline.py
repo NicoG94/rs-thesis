@@ -20,9 +20,9 @@ def train_recommender_model():
         }
     )
     prepare_data_op = dsl.ContainerOp(
-        name = 'get_data', # name of operation
-        image = 'rsthesis/get_data_image:latest', #docker location in registry
-        arguments = get_data_op.output, # passing step_1.output as argument
+        name = 'prepare_data', # name of operation
+        image = 'rsthesis/prepare_data_image:latest', #docker location in registry
+        arguments = [get_data_op], #get_data_op.output, # passing step_1.output as argument
         file_outputs = {
             'context': '/output.txt' #name of the file with result
         }
@@ -30,5 +30,5 @@ def train_recommender_model():
 
 #importing KFP compiler
 from kfp.compiler import Compiler#compiling the created pipeline
-Compiler().compile(train_recommender_modell, 'train_modell_pipeline.zip')
+Compiler().compile(train_recommender_model, 'train_modell_pipeline.zip')
 
