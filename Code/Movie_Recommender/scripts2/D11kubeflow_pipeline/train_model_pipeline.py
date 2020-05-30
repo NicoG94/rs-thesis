@@ -22,9 +22,9 @@ def train_recommender_model():
         name = 'prepare_data', # name of operation
         image = 'rsthesis/prepare_data_image:latest', #docker location in registry
         arguments = get_data_op.output, #get_data_op.output, # passing step_1.output as argument
-        file_outputs = {
-            'blob-path': '/blob_path.txt' #name of the file with result
-        }
+        #file_outputs = {
+        #    'blob-path': '/blob_path.txt' #name of the file with result
+        #}
    )
 
 #importing KFP compiler
