@@ -49,6 +49,7 @@ def merge_data(datafolder):
         output_file.write(file_path)
 
 def get_data(temp_folder):
+    print(temp_folder)
     a = pd.DataFrame({"A":[1,2]})
 
 
@@ -57,7 +58,7 @@ def get_data(temp_folder):
     # save data
     a.to_csv(file_path, index=False)
     # save path
-    with open("/blob_path.txt", "w") as output_file:
+    with open("/tmp/results.txt", "w") as output_file:
         output_file.write(file_path)
 
 
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     print("Lets start")
     # url = "http://files.grouplens.org/datasets/movielens/ml-latest.zip" # big
     #url = "http://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
-    temp_folder = '/data_folder'
+    temp_folder = '/tmp'
     make_dir(temp_folder)
     #download_and_save_data(url, temp_folder)
     #merge_data(temp_folder)
