@@ -46,14 +46,14 @@ def read_csv(bucket_name, file_name):
     df = pd.read_csv(path)
     return df
 
-def write_csv(bucket_name, file_name):
+def write_csv(df, bucket_name, file_name):
     from google.cloud import storage
     import gcsfs
     import pandas as pd
 
     init_gs()
     path = get_pd_path(bucket_name, file_name)
-    df = pd.to_csv(path)
+    df.to_csv(path)
     print(f"{file_name} saved to bucket {bucket_name}")
 
 def save_model(bucket_name, file_name, algo):

@@ -83,9 +83,9 @@ def get_coll_filt_data() -> str:
     ratingsImbd = ratings.merge(links,left_index=True, right_index=True)
 
     # upload data
-    ratingsImbd.to_csv(r"C:/Users/nicog/OneDrive/3. Semester - Masterthesis/Code/Movie_Recommender/data/coll_filt_data.csv", index=False)
-    upload_file_name = "prepared_data/coll_filt_data2.csv"
-    gsq.write_csv(bucket_name, upload_file_name)
+    ratingsImbd.to_csv(r"C:/Users/nicog/OneDrive/3. Semester - Masterthesis/Code/Movie_Recommender/data/coll_filt_data_test.csv", index=False)
+    upload_file_name = "prepared_data/coll_filt_data2_test.csv"
+    gsq.write_csv(ratingsImbd, bucket_name, upload_file_name)
 
     print("coll_filt_data saved")
     #return ratingsImbd

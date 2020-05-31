@@ -15,7 +15,7 @@ def get_data_op():
     }
     )
 
-def prepare_data_op(data):
+def prepare_data_op():
     return dsl.ContainerOp(
         name = 'prepare_data', # name of operation
         image = 'rsthesis/prepare_data_image:latest', #docker location in registry
@@ -34,7 +34,7 @@ def prepare_data_op(data):
 # stitch the steps
 def train_recommender_model_pipeline():
     get_data_op_task = get_data_op()
-    prepare_data_op_task = prepare_data_op(get_data_op_task.output)
+    prepare_data_op_task = prepare_data_op()
 
     prepare_data_op_task.after(get_data_op_task)
 

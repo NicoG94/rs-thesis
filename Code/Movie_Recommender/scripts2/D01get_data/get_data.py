@@ -1,8 +1,9 @@
-import pandas as pd
 import os
 from urllib.request import urlopen
 from zipfile import ZipFile
-import sys
+from google.cloud import storage
+import gcsfs
+import pandas as pd
 
 def download_and_save_data(url, datafolder):
     zipurl = url
@@ -27,33 +28,29 @@ def make_dir(temp_folder):
     if not os.path.exists(temp_folder):
         os.mkdir(temp_folder)
 
-def merge_data(datafolder):
-    links_file_name = f"{datafolder}/links.csv"
-    ratings_file_name = f"{datafolder}/ratings.csv"
+def merge_data(datafolder, dataset):
+    links_file_name = f"{datafolder}/{dataset}/links.csv"
+    ratings_file_name = f"{datafolder}/{dataset}/ratings.csv"
 
     links = pd.read_csv(links_file_name)
     ratings = pd.read_csv(ratings_file_name)
 
     # merge data
     ratingsImbd = ratings.merge(links, left_index=True, right_index=True)
+    return ratingsImbd
 
-    file_path = os.path.join(
-        temp_folder, 'data.csv')
+def get_pd_path(bucket_name, file_name):
+    pathToLinks = 'gs://{}/{}'.format(bucket_name, file_name)
+    return pathToLinks
 
-    # upload data
-    ratingsImbd.to_csv(file_path, index=False)
-
-    # save data
-    ratingsImbd.to_csv(file_path, index=False)
-    # save path
-    with open("blob_path.txt", "w") as output_file:
-        output_file.write(file_path)
+def write_csv(df, bucket_name, file_name):
+    path = get_pd_path(bucket_name, file_name)
+    df.to_csv(path)
+    print(f"{file_name} saved to bucket {bucket_name}")
 
 def get_data(temp_folder):
     print(temp_folder)
     a = pd.DataFrame({"A":[1,2]})
-
-
     file_path = os.path.join(
         temp_folder, 'data.csv')
     # save data
@@ -64,23 +61,24 @@ def get_data(temp_folder):
 
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description='Preprocessing')
-    parser.add_argument('--data_bucket',
-                        type=str,
-                        help='GCS bucket where preprocessed data is saved',
-                        default='abc')
-    args = parser.parse_args()
-    print(args.data_bucket)
+    print("Lets start V0.0.2")
+    dataset = "ml-latest-small" # small
+    #dataset = "ml-latest" # big
 
-    print("Lets start V0.0.1")
-    # url = "http://files.grouplens.org/datasets/movielens/ml-latest.zip" # big
-    #url = "http://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
+    url = f"http://files.grouplens.org/datasets/movielens/{dataset}.zip"
     temp_folder = '/data_folder'
+    bucket_name="movie_data_2603"
+    file_name = "prepared_data/coll_filt_data_kfp_test1.csv"
+
     make_dir(temp_folder)
-    #download_and_save_data(url, temp_folder)
-    #merge_data(temp_folder)
-    get_data(temp_folder)
+    download_and_save_data(url, temp_folder)
+    data = merge_data(temp_folder, dataset)
+    write_csv(data, bucket_name, file_name)
+    #get_data(temp_folder)
+    file_path = get_pd_path(bucket_name, file_name)
+    # save path
+    with open("/blob_path.txt", "w") as output_file:
+        output_file.write(file_path)
     print("DONE")
 
 
