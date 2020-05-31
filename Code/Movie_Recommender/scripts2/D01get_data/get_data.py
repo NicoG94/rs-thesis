@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from urllib.request import urlopen
 from zipfile import ZipFile
+import sys
 
 def download_and_save_data(url, datafolder):
     zipurl = url
@@ -58,15 +59,24 @@ def get_data(temp_folder):
     # save data
     a.to_csv(file_path, index=False)
     # save path
-    with open("/tmp/results.txt", "w") as output_file:
+    with open("/blob_path.txt", "w") as output_file:
         output_file.write(file_path)
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description='Preprocessing')
+    parser.add_argument('--data_bucket',
+                        type=str,
+                        help='GCS bucket where preprocessed data is saved',
+                        default='abc')
+    args = parser.parse_args()
+    print(args.data_bucket)
+
     print("Lets start V0.0.1")
     # url = "http://files.grouplens.org/datasets/movielens/ml-latest.zip" # big
     #url = "http://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
-    temp_folder = '/tmp'
+    temp_folder = '/data_folder'
     make_dir(temp_folder)
     #download_and_save_data(url, temp_folder)
     #merge_data(temp_folder)
