@@ -63,7 +63,7 @@ def get_data(temp_folder):
 
 
 if __name__ == "__main__":
-    print("Lets start")
+    print("Lets start V0.0.1")
     # url = "http://files.grouplens.org/datasets/movielens/ml-latest.zip" # big
     #url = "http://files.grouplens.org/datasets/movielens/ml-latest-small.zip"
     temp_folder = '/tmp'
