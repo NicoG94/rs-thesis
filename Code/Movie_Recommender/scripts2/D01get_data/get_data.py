@@ -4,24 +4,31 @@ from zipfile import ZipFile
 #from google.cloud import storage
 import gcsfs
 import pandas as pd
+import requests
+import zipfile
+import io
+
 
 def download_and_save_data(url, datafolder):
-    zipurl = url
+    r = requests.get(url)
+    zf = zipfile.ZipFile(io.BytesIO(r.content))
+
+    #zipurl = url
     # Download the file from the URL
-    zipresp = urlopen(zipurl)
+    #zipresp = urlopen(zipurl) # HIIIIER
     # Create a new file on the hard drive
-    tempzip = open("data_folder/tempfile.zip", "wb")
+    #tempzip = open("data_folder/tempfile.zip", "wb")
     # Write the contents of the downloaded file into the new file
-    tempzip.write(zipresp.read())
+    #tempzip.write(zipresp.read())
     # Close the newly-created file
-    tempzip.close()
+    #tempzip.close()
     # Re-open the newly-created file with ZipFile()
-    zf = ZipFile("data_folder/tempfile.zip")
+    #zf = ZipFile("data_folder/tempfile.zip")
     # Extract its contents into <extraction_path>
     # note that extractall will automatically create the path
     zf.extractall(path='data_folder')
     # close the ZipFile instance
-    zf.close()
+    #zf.close()
 
 def make_dir(temp_folder):
     # make folder and path
@@ -71,6 +78,8 @@ if __name__ == "__main__":
     file_name = "prepared_data/coll_filt_data_kfp_test1.csv"
     if os.environ.get('GOOGLE_APPLICATION_CREDENTIALS') is None:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/out.json"
+
+
 
     make_dir(temp_folder)
     download_and_save_data(url, temp_folder)
