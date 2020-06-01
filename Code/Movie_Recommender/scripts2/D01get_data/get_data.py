@@ -69,6 +69,8 @@ if __name__ == "__main__":
     temp_folder = '/data_folder'
     bucket_name="movie_data_2603"
     file_name = "prepared_data/coll_filt_data_kfp_test1.csv"
+    if os.environ.get('GOOGLE_APPLICATION_CREDENTIALS') is None:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/out.json"
 
     make_dir(temp_folder)
     download_and_save_data(url, temp_folder)

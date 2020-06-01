@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import logging
-#from google.cloud import storage
+from google.cloud import storage
 import gcsfs
 
 def make_dir(temp_folder):
@@ -28,6 +28,8 @@ if __name__ == "__main__":
     #make_dir(temp_folder)
     bucket_name="movie_data_2603"
     file_name = "prepared_data/coll_filt_data_kfp_test.csv"
+    if os.environ.get('GOOGLE_APPLICATION_CREDENTIALS') is None:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/out.json"
     df = read_csv(bucket_name, file_name)
     prepare_data(df)
     print("preparing done")
