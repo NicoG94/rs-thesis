@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="616fd4da-b0da-497c-92cc-a31dd4282bcf" name="Default Changelist" comment="" />
+    <list default="true" id="616fd4da-b0da-497c-92cc-a31dd4282bcf" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D01get_data/get_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D01get_data/get_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D02prepare_data/prepare_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D02prepare_data/prepare_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D11kubeflow_pipeline/train_model_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D11kubeflow_pipeline/train_model_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locallibrary/catalog/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/locallibrary/catalog/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locallibrary/locallibrary/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/locallibrary/locallibrary/urls.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,6 +22,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
   <component name="ProjectId" id="1WRYhLHQ0FlAA8fd2eeoACCU30M" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -25,7 +35,8 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Movie_Recommender" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">

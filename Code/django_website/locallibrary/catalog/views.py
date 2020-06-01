@@ -100,6 +100,7 @@ def rating(request):
     return render(request, 'rating.html', returnDict)
 
 def recommends(request):
+    ''' function to show website and predict '''
     if gcp:
         init_gs()
     # get user ratings

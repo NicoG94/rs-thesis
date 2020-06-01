@@ -1,8 +1,9 @@
 import pandas as pd
 import os
 import logging
-from google.cloud import storage
+#from google.cloud import storage
 import gcsfs
+import argparse
 
 def make_dir(temp_folder):
     # make folder and path
@@ -16,31 +17,26 @@ def get_pd_path(bucket_name, file_name):
     pathToLinks = 'gs://{}/{}'.format(bucket_name, file_name)
     return pathToLinks
 
-def read_csv(bucket_name, file_name):
-    path = get_pd_path(bucket_name, file_name)
+def read_csv(path):
+    #path = get_pd_path(bucket_name, file_name)
     df = pd.read_csv(path)
     return df
 
 if __name__ == "__main__":
-    print("Lets start")
+    print("Lets start V0.0.3")
     logging.info('getting the data...')
     #temp_folder = '/data_folder'
     #make_dir(temp_folder)
-    bucket_name="movie_data_2603"
-    file_name = "prepared_data/coll_filt_data_kfp_test.csv"
+    parser = argparse.ArgumentParser(description='Preprocessing')
+    parser.add_argument('--blob_path',
+                        type=str,
+                        help='GCS path where raw data is saved')
+    args = parser.parse_args()
+    print(args.blob_path)
     if os.environ.get('GOOGLE_APPLICATION_CREDENTIALS') is None:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/out.json"
-    df = read_csv(bucket_name, file_name)
+    df = read_csv(args.blob_path)
     prepare_data(df)
     print("preparing done")
 
-    r"""
-    import argparse
-    parser = argparse.ArgumentParser(description='Preprocessing')
-    parser.add_argument('--data_bucket',
-                        type=str,
-                        help='GCS bucket where preprocessed data is saved',
-                        default='abc')
-    args = parser.parse_args()
-    print(args.data_bucket)
-    """
+

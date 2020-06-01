@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('rating/', views.rating, name='rating'),
-    path('recommends/', views.recommends, name='recommends'),
+    #path('recommends/', views.recommends, name='recommends'),
     path('rating/rate/', views.recommends, name="rate"),
 ]
