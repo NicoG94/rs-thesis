@@ -21,9 +21,9 @@ def prepare_data_op(blob_path):
         image = 'rsthesis/prepare_data_image:latest', #docker location in registry
         arguments = ["--blob_path", blob_path], #get_data_op.output, # passing step_1.output as argument
         #command=["python", "prepare_data_op.py"]
-        #file_outputs = {
-        #    'blob-path': '/blob_path.txt' #name of the file with result
-        #}
+        file_outputs = {
+            'blob-path': '/blob_path.txt' #name of the file with result
+        }
    )
 
 # defining pipeline meta
