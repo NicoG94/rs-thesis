@@ -5,6 +5,7 @@ import logging
 import gcsfs
 import argparse
 from datetime import date
+from pathlib import Path
 
 def make_dir(temp_folder):
     # make folder and path
@@ -41,8 +42,8 @@ def prepare_data(df, nMostRated = 100, nTopUser = 100):
     return dfPivot
 
 if __name__ == "__main__":
-    print("Lets start V0.0.4")
-    logging.info('getting the data...')
+    print("Lets start V0.1.0")
+    r"""
     #temp_folder = '/data_folder'
     #make_dir(temp_folder)
     parser = argparse.ArgumentParser(description='Preprocessing')
@@ -51,6 +52,9 @@ if __name__ == "__main__":
                         help='GCS path where raw data is saved')
     args = parser.parse_args()
     print(args.blob_path)
+    b = pd.read_csv(args.blob_path)
+    print(b)
+    
     if os.environ.get('GOOGLE_APPLICATION_CREDENTIALS') is None:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/out.json"
     df = read_csv(args.blob_path)
@@ -68,5 +72,22 @@ if __name__ == "__main__":
     with open("/blob_path.txt", "w") as output_file:
         output_file.write(output_file_path)
     print("DONE")
+    """
 
+    # Defining and parsing the command-line arguments
+    parser = argparse.ArgumentParser(description='My program description')
+    parser.add_argument('--input1-path', type=str,
+                        help='Path of the local file containing the Input 1 data.')  # Paths should be passed in, not hardcoded
+    #parser.add_argument('--param1', type=int, default=100, help='Parameter 1.')
+    parser.add_argument('--output1-path', type=str,
+                        help='Path of the local file where the Output 1 data should be written.')  # Paths should be passed in, not hardcoded
+    args = parser.parse_args()
+    print(args)
+
+    # Creating the directory where the output file will be created (the directory may or may not exist).
+    Path(args.output1_path).parent.mkdir(parents=True, exist_ok=True)
+
+    with open(args.input1_path, 'r') as input1_file:
+        with open(args.output1_path, 'w') as output1_file:
+            output1_file.write("This was a success")
 

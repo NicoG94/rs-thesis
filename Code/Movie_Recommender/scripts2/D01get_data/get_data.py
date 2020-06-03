@@ -8,7 +8,8 @@ import requests
 import zipfile
 import io
 from datetime import date
-
+import argparse
+from pathlib import Path
 
 def download_and_save_data(url, datafolder):
     r = requests.get(url, )
@@ -79,6 +80,8 @@ def get_data(temp_folder):
 
 
 if __name__ == "__main__":
+    print("Lets start V0.1.0")
+    r"""
     print("Lets start V0.0.5")
     dataset = "ml-latest-small" # small
     #dataset = "ml-latest" # big
@@ -106,3 +109,21 @@ if __name__ == "__main__":
     with open("/blob_path.txt", "w") as output_file:
         output_file.write(output_file_path)
     print("DONE")
+    """
+    a = pd.DataFrame({"A": [1,2,3,4,5], "B":[4,5,5,5,5]})
+
+
+    parser = argparse.ArgumentParser(description='My program description')
+    parser.add_argument('--output1-path', type=str,
+                        help='Path of the local file where the Output 1 data should be written.')  # Paths should be passed in, not hardcoded
+    args = parser.parse_args()
+    print(args)
+    # Creating the directory where the output file will be created (the directory may or may not exist).
+    Path(args.output1_path).parent.mkdir(parents=True, exist_ok=True)
+
+    r"""
+    with open(args.output1_path, 'w') as output1_file:
+        print("A")
+        do_work(input1_file, output1_file, args.param1)
+    """
+    a.to_csv(args.output1_path, index=False)
