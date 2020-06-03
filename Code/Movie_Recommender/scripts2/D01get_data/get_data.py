@@ -39,7 +39,13 @@ def make_dir(temp_folder):
 
 def read_csv(bucket_name, file_name):
     path = get_pd_path(bucket_name, file_name)
-    df = pd.read_csv(path)
+    data_downloaded = False
+    while data_downloaded == False:
+        try:
+            df = pd.read_csv(path)
+            data_downloaded = True
+        except Exception as e:
+            print(e)
     return df
 
 def merge_data(bucket_name, links_file_name, ratings_file_name):
@@ -73,7 +79,7 @@ def get_data(temp_folder):
 
 
 if __name__ == "__main__":
-    print("Lets start V0.0.4")
+    print("Lets start V0.0.5")
     dataset = "ml-latest-small" # small
     #dataset = "ml-latest" # big
     bucket_name = "movie_data_2603"
