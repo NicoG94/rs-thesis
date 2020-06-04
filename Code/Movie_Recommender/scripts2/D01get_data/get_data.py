@@ -110,7 +110,7 @@ if __name__ == "__main__":
         output_file.write(output_file_path)
     print("DONE")
     """
-    a = pd.DataFrame({"A": [1,2,3,4,5], "B":[4,5,5,5,5]})
+    a = pd.DataFrame({"A": list(range(0,100000)), "B":list(range(0,100000))})
 
 
     parser = argparse.ArgumentParser(description='My program description')

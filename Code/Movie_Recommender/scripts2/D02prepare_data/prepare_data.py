@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     df = str_to_df(args.input1_path)
     print(df)
-    
+
     #with open(args.input1_path, 'r') as input1_file:
     with open(args.output1_path, 'w') as output1_file:
         output1_file.write("This was a success")
