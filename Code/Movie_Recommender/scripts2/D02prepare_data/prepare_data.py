@@ -6,6 +6,8 @@ import gcsfs
 import argparse
 from datetime import date
 from pathlib import Path
+from kfp.components import InputPath, OutputPath
+from io import StringIO
 
 def make_dir(temp_folder):
     # make folder and path
@@ -20,6 +22,10 @@ def read_csv(path):
     #path = get_pd_path(bucket_name, file_name)
     df = pd.read_csv(path)
     return df
+
+def str_to_df(str):
+    return pd.read_csv(StringIO(str), sep=",")
+
 
 def write_csv(df, bucket_name, file_name):
     path = get_pd_path(bucket_name, file_name)
@@ -87,7 +93,10 @@ if __name__ == "__main__":
     # Creating the directory where the output file will be created (the directory may or may not exist).
     Path(args.output1_path).parent.mkdir(parents=True, exist_ok=True)
 
-    with open(args.input1_path, 'r') as input1_file:
-        with open(args.output1_path, 'w') as output1_file:
-            output1_file.write("This was a success")
+    df = str_to_df(args.input1_path)
+    print(df)
+    
+    #with open(args.input1_path, 'r') as input1_file:
+    with open(args.output1_path, 'w') as output1_file:
+        output1_file.write("This was a success")
 
