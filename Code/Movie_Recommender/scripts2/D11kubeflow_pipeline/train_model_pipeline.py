@@ -43,7 +43,7 @@ def prepare_data_op(input_path, output_path):
     return dsl.ContainerOp(
         name = 'prepare_data', # name of operation
         image = 'rsthesis/prepare_data_image:latest', #docker location in registry
-        arguments = ['--input1-path',  input_path, '--output1-path', output_path], #get_data_op.output, # passing step_1.output as argument
+        arguments = ['--input1-path',  dsl.InputArgumentPath(input_path), '--output1-path', output_path], #get_data_op.output, # passing step_1.output as argument
         command=["python", "prepare_data.py"],
         file_outputs = {
             'data_output': output_path #name of the file with result
@@ -58,9 +58,10 @@ def prepare_data_op(input_path, output_path):
 )
 # stitch the steps
 def train_recommender_model_pipeline():
-    output_path = "data.txt"
-    get_data_op_task = get_data_op(output_path)
+    get_data_op_task = get_data_op("raw_data.csv")
+    get_data_op_task.container.set_image_pull_policy("Always")
     prepare_data_op_task = prepare_data_op(get_data_op_task.outputs["data_output"], "data2.txt")
+    prepare_data_op_task.container.set_image_pull_policy("Always")
 
     prepare_data_op_task.after(get_data_op_task)
 

@@ -67,16 +67,6 @@ def write_csv(df, bucket_name, file_name):
     df.to_csv(path)
     print(f"{file_name} saved to bucket {bucket_name}")
 
-def get_data(temp_folder):
-    print(temp_folder)
-    a = pd.DataFrame({"A":[1,2]})
-    file_path = os.path.join(
-        temp_folder, 'data.csv')
-    # save data
-    a.to_csv(file_path, index=False)
-    # save path
-    with open("/blob_path.txt", "w") as output_file:
-        output_file.write(file_path)
 
 
 if __name__ == "__main__":
@@ -110,7 +100,7 @@ if __name__ == "__main__":
         output_file.write(output_file_path)
     print("DONE")
     """
-    a = pd.DataFrame({"A": list(range(0,100000)), "B":list(range(0,100000))})
+    a = pd.DataFrame({"A": list(range(0,1000000)), "B":list(range(0,1000000))})
 
 
     parser = argparse.ArgumentParser(description='My program description')

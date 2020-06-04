@@ -89,14 +89,15 @@ if __name__ == "__main__":
                         help='Path of the local file where the Output 1 data should be written.')  # Paths should be passed in, not hardcoded
     args = parser.parse_args()
     print(args)
-
+    print(args.input1_path)
     # Creating the directory where the output file will be created (the directory may or may not exist).
     Path(args.output1_path).parent.mkdir(parents=True, exist_ok=True)
 
-    df = str_to_df(args.input1_path)
-    print(df)
+    #df = str_to_df(args.input1_path)
+    #print(df)
 
     #with open(args.input1_path, 'r') as input1_file:
     with open(args.output1_path, 'w') as output1_file:
         output1_file.write("This was a success")
 
+    df = pd.read_csv(args.input1_path)
