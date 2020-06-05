@@ -1,5 +1,5 @@
 FROM python:3
-ENV pystep=get_data.py
+ENV pystep=train_model.py
 ADD $pystep /
 COPY $pystep /$pystep
 RUN pip install pipreqs

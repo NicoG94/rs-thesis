@@ -3,29 +3,6 @@ from kfp.dsl import pipeline
 import kfp.dsl as dsl
 from kfp.compiler import Compiler
 
-r"""
-def get_data_op():
-    return dsl.ContainerOp(
-        name = 'get_data', # name of the operation
-        image = 'rsthesis/get_data_image:latest', #docker location in registry
-        file_outputs = {
-            'blob-path': '/blob_path.txt' #name of the file with result
-        },
-        #container_kwargs={"image_pull_policy": "Always"}
-    )
-
-def prepare_data_op(blob_path):
-    return dsl.ContainerOp(
-        name = 'prepare_data', # name of operation
-        image = 'rsthesis/prepare_data_image:latest', #docker location in registry
-        arguments = ["--blob_path", blob_path], #get_data_op.output, # passing step_1.output as argument
-        command=["python", "prepare_data.py"]
-        #file_outputs = {
-        #    'blob-path': '/blob_path.txt' #name of the file with result
-        #},
-        #container_kwargs = {"image_pull_policy": "Always"}
-   )
-"""
 def create_pvc_op():
     return dsl.VolumeOp(
         name="create_pvc",
@@ -69,6 +46,19 @@ def prepare_data_op(input_path, output_path, pvc_path, vol):
         container_kwargs = {"image_pull_policy": "Always"}
    )
 
+def train_model_op(input_path, output_path, pvc_path, vol):
+    return dsl.ContainerOp(
+        name='train_model',
+        image='rsthesis/train_model_image:latest',
+        arguments=['--input_path', input_path, '--output_path', output_path],
+        command=["python", "train_model.py"],
+        file_outputs={
+            'data_output': output_path
+        },
+        pvolumes={pvc_path: vol},
+        container_kwargs={"image_pull_policy": "Always"}
+    )
+
 # defining pipeline meta
 @pipeline(
     name='Train recommender modell',
@@ -82,11 +72,12 @@ def train_recommender_model_pipeline(pvc_path = "/mnt"):
     download_data_op_task= download_data_op(vol=create_pvc_op_task.volume, pvc_path=pvc_path)
     # merge data
     merge_data_op_task = merge_data_op(input_path="/mnt", output_path="/mnt/merged_data.csv", vol=download_data_op_task.pvolume, pvc_path=pvc_path)
-    merge_data_op_task.container.set_image_pull_policy("Always")
+    merge_data_op_task.set_image_pull_policy("Always")
     # prepare data for training
     prepare_data_op_task = prepare_data_op(input_path=merge_data_op_task.outputs["data_output"], output_path="/mnt/prepared_data.csv", vol=merge_data_op_task.pvolume, pvc_path=pvc_path)
-    prepare_data_op_task.container.set_image_pull_policy("Always")
-
+    prepare_data_op_task.set_image_pull_policy("Always")
+    # train model
+    train_model_op_task = train_model_op(input_path=prepare_data_op_task.outputs["data_output"], output_path="/mnt", pvc_path=pvc_path, vol=prepare_data_op_task.pvolume)
 
 #importing KFP compiler
 #compiling the created pipeline
@@ -97,3 +88,15 @@ Compiler().compile(train_recommender_model_pipeline, 'train_modell_pipeline3.zip
 
 #pipeline_conf=kfp.dsl.PipelineConf()
 #pipeline_conf.add_op_transformer(gcp.use_gcp_secret('user-gcp-sa'))
+
+import kfp
+client = kfp.Client()
+EXPERIMENT_NAME = "Next - rs_kfp"
+try:
+    experiment = client.get_experiment(experiment_name=EXPERIMENT_NAME)
+except:
+    experiment = client.create_experiment(EXPERIMENT_NAME)
+run_name = "jpn_run"
+run_result = client.run_pipeline(experiment.id, run_name, 'train_modell_pipeline3.zip')
+
+print(run_result)

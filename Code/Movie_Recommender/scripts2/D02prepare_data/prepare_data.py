@@ -18,7 +18,7 @@ def prepare_data(df, nMostRated = 100, nTopUser = 100):
     return dfPivot
 
 if __name__ == "__main__":
-    print("Lets start V0.1.1")
+    print("Lets start V0.1.2")
 
     # get arguments
     parser = argparse.ArgumentParser(description='My program description')
