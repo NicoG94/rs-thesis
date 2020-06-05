@@ -20,14 +20,14 @@ def download_data_op(vol, pvc_path):
         pvolumes={pvc_path: vol}
     )
 
-def merge_data_op(input_path, output_path, vol, pvc_path):
+def merge_data_op(input_path_links, input_path_ratings, output_path, vol, pvc_path):
     return dsl.ContainerOp(
         name = 'merge_data', # name of the operation
         image = 'rsthesis/get_data_image:latest', #docker location in registry
         file_outputs = {
             'data_output': output_path #name of the file with result
         },
-        arguments=['--input_path',  input_path, '--output_path', output_path],
+        arguments=['--input_path_links',  input_path_links, '--input_path_ratings',  input_path_ratings, '--output_path', output_path],
         container_kwargs={"image_pull_policy": "Always"},
         command=["python", "get_data.py"],
         pvolumes={pvc_path: vol}
@@ -71,7 +71,7 @@ def train_recommender_model_pipeline(pvc_path = "/mnt"):
     # download the data to persistent storage
     download_data_op_task= download_data_op(vol=create_pvc_op_task.volume, pvc_path=pvc_path)
     # merge data
-    merge_data_op_task = merge_data_op(input_path="/mnt", output_path="/mnt/merged_data.csv", vol=download_data_op_task.pvolume, pvc_path=pvc_path)
+    merge_data_op_task = merge_data_op(input_path_links="/mnt/raw_movie_data/links.csv", input_path_ratings="/mnt/raw_movie_data/ratings.csv", output_path="/mnt/merged_data.csv", vol=download_data_op_task.pvolume, pvc_path=pvc_path)
     merge_data_op_task.set_image_pull_policy("Always")
     # prepare data for training
     prepare_data_op_task = prepare_data_op(input_path=merge_data_op_task.outputs["data_output"], output_path="/mnt/prepared_data.csv", vol=merge_data_op_task.pvolume, pvc_path=pvc_path)
@@ -89,6 +89,7 @@ Compiler().compile(train_recommender_model_pipeline, 'train_modell_pipeline3.zip
 #pipeline_conf=kfp.dsl.PipelineConf()
 #pipeline_conf.add_op_transformer(gcp.use_gcp_secret('user-gcp-sa'))
 
+r"""
 import kfp
 client = kfp.Client()
 EXPERIMENT_NAME = "Next - rs_kfp"
@@ -100,3 +101,4 @@ run_name = "jpn_run"
 run_result = client.run_pipeline(experiment.id, run_name, 'train_modell_pipeline3.zip')
 
 print(run_result)
+"""

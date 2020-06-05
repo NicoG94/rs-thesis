@@ -3,20 +3,22 @@ import argparse
 from pathlib import Path
 
 if __name__ == "__main__":
-    print("Lets start V0.1.2")
+    print("Lets start V0.1.3")
 
     # get arguments
     parser = argparse.ArgumentParser(description='My program description')
     parser.add_argument('--output_path', type=str,
                         help='Path of the local file where the Output 1 data should be written.')  # Paths should be passed in, not hardcoded
-    parser.add_argument('--input_path', type=str,
+    parser.add_argument('--input_path_links', type=str,
+                        help='Path of the local file containing the Input 1 data.')  # Paths should be passed in, not hardcoded
+    parser.add_argument('--input_path_ratings', type=str,
                         help='Path of the local file containing the Input 1 data.')  # Paths should be passed in, not hardcoded
     args = parser.parse_args()
     print(args)
 
     # read data
-    ratings = pd.read_csv(args.input_path+"/ml-latest-small/ratings.csv")
-    links = pd.read_csv(args.input_path+"/ml-latest-small/links.csv")
+    ratings = pd.read_csv(args.input_path_ratings)
+    links = pd.read_csv(args.input_path_links)
 
     # merge data
     ratingsImbd = ratings.merge(links, left_index=True, right_index=True)
