@@ -1,36 +1,7 @@
 import pandas as pd
-import os
-import logging
-#from google.cloud import storage
-import gcsfs
 import argparse
-from datetime import date
 from pathlib import Path
-from kfp.components import InputPath, OutputPath
-from io import StringIO
 
-def make_dir(temp_folder):
-    # make folder and path
-    if not os.path.exists(temp_folder):
-        os.mkdir(temp_folder)
-
-def get_pd_path(bucket_name, file_name):
-    pathToLinks = 'gs://{}/{}'.format(bucket_name, file_name)
-    return pathToLinks
-
-def read_csv(path):
-    #path = get_pd_path(bucket_name, file_name)
-    df = pd.read_csv(path)
-    return df
-
-def str_to_df(str):
-    return pd.read_csv(StringIO(str), sep=",")
-
-
-def write_csv(df, bucket_name, file_name):
-    path = get_pd_path(bucket_name, file_name)
-    df.to_csv(path)
-    print(f"{file_name} saved to bucket {bucket_name}")
 
 def prepare_data(df, nMostRated = 100, nTopUser = 100):
     # take only top 1000 most rated movies

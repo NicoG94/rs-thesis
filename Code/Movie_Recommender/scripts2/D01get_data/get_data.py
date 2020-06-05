@@ -15,8 +15,8 @@ if __name__ == "__main__":
     print(args)
 
     # read data
-    ratings = pd.read_csv(args.input_path+"/ratings.csv")
-    links = pd.read_csv(args.input_path+"/links.csv")
+    ratings = pd.read_csv(args.input_path+"/ml-latest-small/ratings.csv")
+    links = pd.read_csv(args.input_path+"/ml-latest-small/links.csv")
 
     # merge data
     ratingsImbd = ratings.merge(links, left_index=True, right_index=True)
