@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 if __name__ == "__main__":
-    print("Lets start V0.1.1")
+    print("Lets start V0.1.2")
 
     # get arguments
     parser = argparse.ArgumentParser(description='My program description')
