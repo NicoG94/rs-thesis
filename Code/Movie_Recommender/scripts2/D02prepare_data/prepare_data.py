@@ -18,7 +18,7 @@ def prepare_data(df, nMostRated = 100, nTopUser = 100):
     return dfPivot
 
 if __name__ == "__main__":
-    print("Lets start V0.1.2")
+    print("Lets start V0.1.3")
 
     # get arguments
     parser = argparse.ArgumentParser(description='My program description')
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     df = prepare_data(df, nMostRated=100, nTopUser=100)
 
     # Creating the directory where the output file will be created (the directory may or may not exist).
-    Path(args.output1_path).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
 
     # save data
     df.to_csv(args.output_path)
