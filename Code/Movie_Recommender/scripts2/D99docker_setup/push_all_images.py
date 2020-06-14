@@ -15,7 +15,7 @@ def push_all_images(origtag, repos):
         print(f"{repo} image pushed")
 
 if __name__ == "__main__":
-    origtag = "test2"
+    origtag = "test3"
     repos={"get_data_image":r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
            "train_model_image":r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
            "predict_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D06_predict"}
