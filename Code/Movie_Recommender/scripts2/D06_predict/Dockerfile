@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 RUN apt-get update
 RUN apt-get install sudo
-RUN sudo apt-get install \
+RUN sudo apt-get -y install \
 python3 \
 python3-pip \
 curl \
