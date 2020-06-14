@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3
 RUN apk add --update \
 curl \
 which \
@@ -15,6 +15,6 @@ RUN pip install pipreqs
 RUN mkdir pipreqs_folder
 RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
-RUN pip install pandas==1.0.3
+RUN pip install -r pipreqs_folder/requirements.txt
 
 
