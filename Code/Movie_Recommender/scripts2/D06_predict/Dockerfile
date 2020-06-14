@@ -1,10 +1,9 @@
 FROM alpine:3.6
 RUN apk add --update \
-python \
+python3.7 \
 curl \
 which \
 bash \
-python3-pip
 RUN curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH $PATH:/root/google-cloud-sdk/bin
 RUN mkdir gcp_data
