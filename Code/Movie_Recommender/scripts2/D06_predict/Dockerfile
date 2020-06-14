@@ -1,9 +1,10 @@
-FROM alpine:3.6
-RUN apk add --update \
+FROM ubuntu:latest
+RUN apt-get update
+RUN apt-get install sudo
+RUN sudo apt-get install \
 python3 \
-py-pip \
+python3-pip \
 curl \
-which \
 bash
 RUN curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH $PATH:/root/google-cloud-sdk/bin
