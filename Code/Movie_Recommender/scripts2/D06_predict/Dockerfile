@@ -1,5 +1,7 @@
-FROM python:3
+FROM alpine:3.6
 RUN apk add --update \
+python3 \
+py-pip \
 curl \
 which \
 bash
@@ -16,5 +18,8 @@ RUN mkdir pipreqs_folder
 RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
 RUN pip install -r pipreqs_folder/requirements.txt
+
+
+
 
 
