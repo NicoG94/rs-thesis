@@ -2,18 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="616fd4da-b0da-497c-92cc-a31dd4282bcf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/models/simpleRS2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/models/simpleRS2.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D01get_data/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D01get_data/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D01get_data/get_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D01get_data/get_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D02prepare_data/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D02prepare_data/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D02prepare_data/prepare_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D02prepare_data/prepare_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D03train_model/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D03train_model/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D03train_model/train_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D03train_model/train_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D11kubeflow_pipeline/train_model_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D11kubeflow_pipeline/train_model_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/train_modell_pipeline3.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/train_modell_pipeline3.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D06_predict/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D06_predict/predict.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D99docker_setup/push_all_images.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D99docker_setup/push_all_images.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locallibrary/catalog/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/locallibrary/catalog/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
