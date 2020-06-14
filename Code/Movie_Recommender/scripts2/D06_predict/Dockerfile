@@ -15,6 +15,6 @@ RUN pip install pipreqs
 RUN mkdir pipreqs_folder
 RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
-RUN pip install pandas
+RUN pip install pandas==1.0.3
 
 
