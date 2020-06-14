@@ -14,11 +14,11 @@ RUN gsutil cp -r gs://rs_predictions gcp_data
 ENV pystep=predict.py
 ADD $pystep /
 COPY $pystep /$pystep
-RUN pip install pipreqs
+RUN pip3 install pipreqs
 RUN mkdir pipreqs_folder
 RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
-RUN pip install -r pipreqs_folder/requirements.txt
+RUN pip3 install -r pipreqs_folder/requirements.txt
 
 
 
