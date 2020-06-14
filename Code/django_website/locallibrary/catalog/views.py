@@ -28,15 +28,16 @@ def read_blob_gs(bucket_name, file_name):
     return blob
 
 def predict_new_user(newUser, pathToPivotData, pathToModel, n_similar_users = 20):
+    # TODO: make quicker - dask df?!
     # load pivoted data
     dfPivot = pd.read_csv(pathToPivotData, index_col=0)
 
     # append new user to data
     dfPivot = dfPivot.append(pd.DataFrame(newUser, index=['-99']))
     dfPivot = dfPivot.fillna(0)  # dfPivot.mean(axis=0))
-
+    
     # calculate distance to each existing user
-    # TODO: make quicker
+    # TODO: make quicker - numpy matrix ?! dask df?
     userDistance = {}
     for user in dfPivot.index:
         userDistance[user] = spatial.distance.euclidean(dfPivot.loc['-99'], dfPivot.loc[user])
@@ -125,7 +126,7 @@ def recommends(request):
         pathToPivotData = 'gs://{}/{}'.format(bucket_name, file_name)
         pathToModel = 'gs://{}/{}'.format(bucket_name, model_file)
     else:
-        pathToPivotData = r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\Movie_Recommender\data\pivotedRatings.csv"
+        pathToPivotData = r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\prepared_data.csv"
         pathToModel = r"C:/Users/nicog/OneDrive/3. Semester - Masterthesis/Code/Movie_Recommender/models/simpleRS2"
 
     recommendedMovies = predict_new_user(newUser, pathToPivotData, pathToModel)

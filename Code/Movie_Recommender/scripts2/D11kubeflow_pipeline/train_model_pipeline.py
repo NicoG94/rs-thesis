@@ -7,7 +7,7 @@ def create_pvc_op():
     return dsl.VolumeOp(
         name="create_pvc",
         resource_name="my-pvc",
-        size="2Gi",
+        size="5Gi",
         modes=dsl.VOLUME_MODE_RWM
     )
 
@@ -20,10 +20,10 @@ def download_data_op(vol, pvc_path):
         pvolumes={pvc_path: vol}
     )
 
-def merge_data_op(input_path_links, input_path_ratings, output_path, vol, pvc_path):
+def merge_data_op(input_path_links, input_path_ratings, output_path, vol, pvc_path, TAG):
     return dsl.ContainerOp(
         name = 'merge_data', # name of the operation
-        image = 'rsthesis/get_data_image:latest', #docker location in registry
+        image = f'rsthesis/get_data_image:{TAG}', #docker location in registry
         file_outputs = {
             'data_output': output_path #name of the file with result
         },
@@ -33,10 +33,10 @@ def merge_data_op(input_path_links, input_path_ratings, output_path, vol, pvc_pa
         pvolumes={pvc_path: vol}
     )
 
-def prepare_data_op(input_path, output_path, pvc_path, vol):
+def prepare_data_op(input_path, output_path, pvc_path, vol, TAG):
     return dsl.ContainerOp(
         name = 'prepare_data',
-        image = 'rsthesis/prepare_data_image:latest',
+        image = f'rsthesis/prepare_data_image:{TAG}',
         arguments = ['--input_path',  dsl.InputArgumentPath(input_path), '--output_path', output_path],
         command=["python", "prepare_data.py"],
         file_outputs = {
@@ -46,11 +46,12 @@ def prepare_data_op(input_path, output_path, pvc_path, vol):
         container_kwargs = {"image_pull_policy": "Always"}
    )
 
-def train_model_op(input_path, output_path, pvc_path, vol):
+def train_model_op(make_cv, make_train_test_split, input_path, output_path, pvc_path, vol, TAG):
     return dsl.ContainerOp(
         name='train_model',
-        image='rsthesis/train_model_image:latest',
-        arguments=['--input_path', input_path, '--output_path', output_path],
+        image=f'rsthesis/train_model_image:{TAG}',
+        arguments=['--input_path', input_path, '--output_path', output_path,
+                   "--make_train_test_split", make_train_test_split, "--make_cv", make_cv],
         command=["python", "train_model.py"],
         file_outputs={
             'data_output': output_path
@@ -65,21 +66,28 @@ def train_model_op(input_path, output_path, pvc_path, vol):
     description='Train recommender modell pipeline'
 )
 # stitch the steps
-def train_recommender_model_pipeline(pvc_path = "/mnt"):
+def train_recommender_model_pipeline(TAG:str, make_cv:bool=True, make_train_test_split:bool=True):
+    # set constant params
+    pvc_path = "/mnt"
     # create persistent storage
     create_pvc_op_task = create_pvc_op()
     # download the data to persistent storage
     download_data_op_task= download_data_op(vol=create_pvc_op_task.volume, pvc_path=pvc_path)
     # merge data
-    merge_data_op_task = merge_data_op(input_path_links="/mnt/raw_movie_data/links.csv", input_path_ratings="/mnt/raw_movie_data/ratings.csv", output_path="/mnt/merged_data.csv", vol=download_data_op_task.pvolume, pvc_path=pvc_path)
-    merge_data_op_task.set_image_pull_policy("Always")
+    merge_data_op_task = merge_data_op(input_path_links="/mnt/raw_movie_data/links.csv", input_path_ratings="/mnt/raw_movie_data/ratings.csv", output_path="/mnt/merged_data.csv", vol=download_data_op_task.pvolume, pvc_path=pvc_path,TAG=TAG)
     # prepare data for training
-    prepare_data_op_task = prepare_data_op(input_path=merge_data_op_task.outputs["data_output"], output_path="/mnt/prepared_data.csv", vol=merge_data_op_task.pvolume, pvc_path=pvc_path)
-    prepare_data_op_task.set_image_pull_policy("Always")
+    #prepare_data_op_task = prepare_data_op(input_path=merge_data_op_task.outputs["data_output"], output_path="/mnt/prepared_data.csv", vol=merge_data_op_task.pvolume, pvc_path=pvc_path,TAG=TAG)
     # train model
-    train_model_op_task = train_model_op(input_path=prepare_data_op_task.outputs["data_output"], output_path="/mnt", pvc_path=pvc_path, vol=prepare_data_op_task.pvolume)
+    train_model_op_task = train_model_op(make_cv=make_cv, make_train_test_split=make_train_test_split, input_path="/mnt/merged_data.csv", output_path="/mnt/model.joblib", pvc_path=pvc_path, vol=merge_data_op_task.pvolume,TAG=TAG)
 
-#importing KFP compiler
+from scripts2.D99docker_setup.push_all_images import push_all_images
+TAG="test8"
+repos = {"get_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
+         "train_model_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
+         "prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
+         }
+#push_all_images(origtag=TAG, repos=repos)
+
 #compiling the created pipeline
 pipelineConfig = dsl.PipelineConf()
 pipelineConfig.set_image_pull_policy("Always")

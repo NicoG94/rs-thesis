@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 if __name__ == "__main__":
-    print("Lets start V0.1.3")
+    print("Lets start V0.1.5")
 
     # get arguments
     parser = argparse.ArgumentParser(description='My program description')
@@ -19,13 +19,16 @@ if __name__ == "__main__":
     # read data
     ratings = pd.read_csv(args.input_path_ratings)
     links = pd.read_csv(args.input_path_links)
+    #ratings = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\ml-latest-small\ratings.csv")
+    #links = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\ml-latest-small\links.csv")
 
     # merge data
-    ratingsImbd = ratings.merge(links, left_index=True, right_index=True)
+    ratingsImbd = ratings.merge(links, on="movieId")
 
     # Creating the directory where the output file will be created (the directory may or may not exist).
     Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
 
     # save data
     ratingsImbd.to_csv(args.output_path, index=False)
+    #ratingsImbd.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv", index=False)
     print("DONE")

@@ -7,4 +7,4 @@ RUN mkdir pipreqs_folder
 RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
 RUN pip install -r pipreqs_folder/requirements.txt
-RUN pip install google-cloud-storage
+RUN pip install scikit-surprise
