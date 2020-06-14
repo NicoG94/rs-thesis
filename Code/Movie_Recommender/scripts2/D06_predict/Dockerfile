@@ -20,6 +20,7 @@ RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
 RUN pip3 install -r pipreqs_folder/requirements.txt
 CMD ["python", "predict.py"]
+ENTRYPOINT ["python", "predict.py"]
 
 
 
