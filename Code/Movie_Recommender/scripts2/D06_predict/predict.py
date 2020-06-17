@@ -42,7 +42,7 @@ def hello_world():
     target = os.environ.get('TARGET', 'World')
     return 'Hello {}!\n'.format(target)
 
-
+"""
 @app.route('/', methods=['GET', 'POST'])
 def api():
     work_dir = tempfile.TemporaryDirectory()
@@ -79,7 +79,7 @@ def api():
         return response
 
     return send_file(output_file_path, mimetype='application/pdf')
-
+"""
 if __name__ == "__main__":
     #app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 8080)))
     from waitress import serve
