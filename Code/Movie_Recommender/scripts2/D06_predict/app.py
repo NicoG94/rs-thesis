@@ -1,5 +1,6 @@
 import os
 from flask import Flask, request
+import argparse
 
 from . import predict
 app = Flask(__name__)
@@ -23,6 +24,13 @@ def hello_world():
         return 'Hello {}!\n'.format(target)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='My program description')
+    parser.add_argument('--port', type=str,
+                        help='port')  # Paths should be passed in, not hardcoded
+    args = parser.parse_args()
+    print(args)
+
     #app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 8080)))
     from waitress import serve
-    serve(app, host="0.0.0.0", port=8080)
+    serve(app, host="0.0.0.0", port=args.port)
+    # CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app | in Dockerfile

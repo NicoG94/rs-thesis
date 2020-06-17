@@ -3,7 +3,7 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 RUN pip3 install Flask gunicorn
-CMD ["python", "app.py"]
+CMD ["python", "app.py", "--port", $PORT]
 
 
 

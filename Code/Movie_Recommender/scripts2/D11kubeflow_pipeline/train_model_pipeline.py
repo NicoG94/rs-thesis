@@ -84,7 +84,7 @@ from scripts2.D99docker_setup.push_all_images import push_all_images
 TAG="test8"
 repos = {"get_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
          "train_model_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
-         "prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
+         #"prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
          }
 #push_all_images(origtag=TAG, repos=repos)
 
