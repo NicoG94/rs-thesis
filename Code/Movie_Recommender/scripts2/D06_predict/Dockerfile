@@ -6,7 +6,3 @@ RUN pip3 install Flask gunicorn
 RUN pip3 install waitress
 CMD python3 app.py --port $PORT
 
-
-
-
-

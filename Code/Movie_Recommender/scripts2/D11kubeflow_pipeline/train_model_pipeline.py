@@ -20,6 +20,15 @@ def download_data_op(vol, pvc_path):
         pvolumes={pvc_path: vol}
     )
 
+def upload_data_op(vol, pvc_path, pred_pvc_path):
+    return dsl.ContainerOp(
+        name = "upload_preds",
+        image = "google/cloud-sdk:295.0.0-slim",
+        command = ["gsutil", "cp", "-r"],
+        arguments = [pred_pvc_path, "gs://rs_predictions"],
+        pvolumes={pvc_path: vol}
+    )
+
 def merge_data_op(input_path_links, input_path_ratings, output_path, vol, pvc_path, TAG):
     return dsl.ContainerOp(
         name = 'merge_data', # name of the operation
@@ -46,15 +55,16 @@ def prepare_data_op(input_path, output_path, pvc_path, vol, TAG):
         container_kwargs = {"image_pull_policy": "Always"}
    )
 
-def train_model_op(make_cv, make_train_test_split, input_path, output_path, pvc_path, vol, TAG):
+def train_model_op(make_cv, make_train_test_split, input_path, output_path_model, output_path_preds, pvc_path, vol, TAG):
     return dsl.ContainerOp(
-        name='train_model',
+        name='train_model_and_predict',
         image=f'rsthesis/train_model_image:{TAG}',
-        arguments=['--input_path', input_path, '--output_path', output_path,
+        arguments=['--input_path', input_path, '--output_path_model', output_path_model, "--output_path_preds", output_path_preds,
                    "--make_train_test_split", make_train_test_split, "--make_cv", make_cv],
         command=["python", "train_model.py"],
         file_outputs={
-            'data_output': output_path
+            'data_output': output_path_preds,
+            "model_output": output_path_model
         },
         pvolumes={pvc_path: vol},
         container_kwargs={"image_pull_policy": "Always"}
@@ -74,39 +84,33 @@ def train_recommender_model_pipeline(TAG:str, make_cv:bool=True, make_train_test
     # download the data to persistent storage
     download_data_op_task= download_data_op(vol=create_pvc_op_task.volume, pvc_path=pvc_path)
     # merge data
-    merge_data_op_task = merge_data_op(input_path_links="/mnt/raw_movie_data/links.csv", input_path_ratings="/mnt/raw_movie_data/ratings.csv", output_path="/mnt/merged_data.csv", vol=download_data_op_task.pvolume, pvc_path=pvc_path,TAG=TAG)
+    merge_data_op_task = merge_data_op(input_path_links="/mnt/raw_movie_data/links.csv",
+                                       input_path_ratings="/mnt/raw_movie_data/ratings.csv",
+                                       output_path="/mnt/merged_data.csv",
+                                       vol=download_data_op_task.pvolume, pvc_path=pvc_path,TAG=TAG)
     # prepare data for training
     #prepare_data_op_task = prepare_data_op(input_path=merge_data_op_task.outputs["data_output"], output_path="/mnt/prepared_data.csv", vol=merge_data_op_task.pvolume, pvc_path=pvc_path,TAG=TAG)
     # train model
-    train_model_op_task = train_model_op(make_cv=make_cv, make_train_test_split=make_train_test_split, input_path="/mnt/merged_data.csv", output_path="/mnt/model.joblib", pvc_path=pvc_path, vol=merge_data_op_task.pvolume,TAG=TAG)
+    train_model_op_task = train_model_op(make_cv=make_cv, make_train_test_split=make_train_test_split,
+                                         input_path="/mnt/merged_data.csv", output_path_model="/mnt/model.joblib",
+                                         output_path_preds="/mnt/predictions.csv",
+                                         pvc_path=pvc_path, vol=merge_data_op_task.pvolume,TAG=TAG)
+    # upload predictions to storage
+    upload_data_op_task=upload_data_op(vol=train_model_op_task.pvolume, pvc_path=pvc_path, pred_pvc_path="/mnt/predictions.csv")
 
 from scripts2.D99docker_setup.push_all_images import push_all_images
-TAG="test8"
+TAG="test10"
 repos = {"get_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
          "train_model_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
          #"prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
          }
-#push_all_images(origtag=TAG, repos=repos)
+push_all_images(origtag=TAG, repos=repos)
 
 #compiling the created pipeline
 pipelineConfig = dsl.PipelineConf()
 pipelineConfig.set_image_pull_policy("Always")
 print(pipelineConfig.image_pull_policy)
+
+#pipelineConfig.add_op_transformer(gcp.use_gcp_secret('user-gcp-sa'))
+
 Compiler().compile(train_recommender_model_pipeline, 'train_modell_pipeline3.zip', pipeline_conf=pipelineConfig)
-
-#pipeline_conf=kfp.dsl.PipelineConf()
-#pipeline_conf.add_op_transformer(gcp.use_gcp_secret('user-gcp-sa'))
-
-r"""
-import kfp
-client = kfp.Client()
-EXPERIMENT_NAME = "Next - rs_kfp"
-try:
-    experiment = client.get_experiment(experiment_name=EXPERIMENT_NAME)
-except:
-    experiment = client.create_experiment(EXPERIMENT_NAME)
-run_name = "jpn_run"
-run_result = client.run_pipeline(experiment.id, run_name, 'train_modell_pipeline3.zip')
-
-print(run_result)
-"""

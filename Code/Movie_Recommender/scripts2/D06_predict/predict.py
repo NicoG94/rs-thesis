@@ -44,4 +44,4 @@ if __name__ == "__main__":
     # df = pd.read_csv("gcp_data/rs_predictions/prepared_data.csv")
     train_data = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\prepared_data.csv")
     newUser = {'114709': 3, '113189': 1, '114746': 5}
-    preds_known_user = 1
+    preds_known_user = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv")

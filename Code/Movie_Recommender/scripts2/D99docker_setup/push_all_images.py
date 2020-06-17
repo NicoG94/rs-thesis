@@ -6,8 +6,8 @@ import docker
 def push_all_images(origtag, repos):
     client = docker.from_env()
     client.login(username="rsthesis")
-    print("start building and pushing images")
     for repo in repos.keys():
+        print(f"start building and pushing {repo}")
         tag=f"rsthesis/{repo}:{origtag}"
         client.images.build(path=repos[repo], tag=origtag)
         client.images.build(path=repos[repo], tag=tag)

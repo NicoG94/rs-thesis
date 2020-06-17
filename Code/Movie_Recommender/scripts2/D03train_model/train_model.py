@@ -37,17 +37,6 @@ def train_model(df, make_cv=True, make_train_test_split=False, user_col="userId"
     # Compute predictions of the 'original' algorithm.
     predictions = algo.test(trainset.build_testset())
 
-    """
-    # Dump algorithm and reload it.
-    dump.dump(output_path, algo=algo)
-    _, loaded_algo = dump.load(output_path)
-
-    # We now ensure that the algo is still the same by checking the predictions.
-    predictions_loaded_algo = loaded_algo.test(trainset.build_testset())
-    assert predictions == predictions_loaded_algo
-    print('Predictions are the same')
-    """
-
     # sample pred
     uid = str(4094)  # raw user id (as in the ratings file). They are **strings**!
     iid = str(114709)  # raw item id (as in the ratings file). They are **strings**!
@@ -57,12 +46,31 @@ def train_model(df, make_cv=True, make_train_test_split=False, user_col="userId"
     print("Algo trained")
     return algo
 
+def predict_dataset(df, model, user_col="userId", item_col="imdbId", rating_col="rating"):
+    reader = Reader(rating_scale=(1, 5))
+    data = Dataset.load_from_df(df[[user_col, item_col, rating_col]], reader)
+    trainset, testset = train_test_split(data, test_size=1.00)
+    predictions = model.test(testset)
+
+    # predictions to pandas df
+    uids, iids, orig_ratings, preds, det=zip(*predictions)
+    predictionsDf = pd.DataFrame()
+    predictionsDf["uid"] = uids
+    predictionsDf["iids"] = iids
+    predictionsDf["orig_ratings"] = orig_ratings
+    predictionsDf["preds"] = preds
+    predictionsDf["det"] = det
+
+    return predictionsDf
+
 if __name__ == "__main__":
-    print("Lets start V0.1.5")
+    print("Lets start V0.2.0")
 
     # get arguments
     parser = argparse.ArgumentParser(description='My program description')
-    parser.add_argument('--output_path', type=str,
+    parser.add_argument('--output_path_model', type=str,
+                        help='Path of the local file where the Output 1 data should be written.')  # Paths should be passed in, not hardcoded
+    parser.add_argument('--output_path_preds', type=str,
                         help='Path of the local file where the Output 1 data should be written.')  # Paths should be passed in, not hardcoded
     parser.add_argument('--input_path', type=str,
                         help='Path of the local file containing the Input 1 data.')  # Paths should be passed in, not hardcoded
@@ -82,13 +90,20 @@ if __name__ == "__main__":
     print("start training")
     model = train_model(df, make_cv=args.make_cv, make_train_test_split=args.make_train_test_split)
 
+    # predict train data
+    predictionsDf = predict_dataset(df, model)
+
     # Creating the directory where the output file will be created (the directory may or may not exist).
     Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
 
     # save model
     #path=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\model.joblib"
-    dump(model, args.output_path, compress=3)
+    dump(model, args.output_path_model, compress=3)
     print("model saved")
 
-    file_mb = os.stat(args.output_path).st_size / 1000000
+    file_mb = os.stat(args.output_path_model).st_size / 1000000
     print(f"Model has {file_mb} MB.")
+
+    predictionsDf.to_csv(args.output_path_preds, index=False)
+    #predictionsDf.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv")
+    print("Predictions saved")
