@@ -37,10 +37,17 @@ from subprocess import call
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def hello_world():
-    target = os.environ.get('TARGET', 'World')
-    return 'Hello {}!\n'.format(target)
+
+    if request.method == 'GET':
+        return "GET"
+    if request.method == 'POST':
+        data = request.form
+        return "POST"
+    else:
+        target = os.environ.get('TARGET', 'World')
+        return 'Hello {}!\n'.format(target)
 
 """
 @app.route('/', methods=['GET', 'POST'])
