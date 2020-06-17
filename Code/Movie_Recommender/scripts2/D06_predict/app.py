@@ -2,7 +2,7 @@ import os
 from flask import Flask, request
 import argparse
 
-from . import predict
+#from . import predict
 app = Flask(__name__)
 
 
