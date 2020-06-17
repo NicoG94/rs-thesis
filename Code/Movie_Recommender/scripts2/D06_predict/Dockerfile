@@ -6,6 +6,11 @@ python3 \
 python3-pip \
 curl \
 bash
+
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+RUN pip3 install Flask gunicorn
+
 RUN curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH $PATH:/root/google-cloud-sdk/bin
 RUN mkdir gcp_data
@@ -19,7 +24,7 @@ RUN mkdir pipreqs_folder
 RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
 RUN pip3 install -r pipreqs_folder/requirements.txt
-RUN pip3 install Flask gunicorn
+
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
 
 
