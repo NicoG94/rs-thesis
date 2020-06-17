@@ -39,15 +39,19 @@ app = Flask(__name__)
 
 @app.route('/', methods = ['GET', 'POST'])
 def hello_world():
-
+    target = os.environ.get('TARGET', 'World')
+    return 'Hello {}!\n'.format(target)
+    """
     if request.method == 'GET':
+        print("GET print")
         return "GET"
     if request.method == 'POST':
-        data = request.form
-        return "POST"
+        # TODO: correct post & get format with request
+        data = {"test_key": "test_val"}
+        return data
     else:
         target = os.environ.get('TARGET', 'World')
-        return 'Hello {}!\n'.format(target)
+        return 'Hello {}!\n'.format(target)"""
 
 """
 @app.route('/', methods=['GET', 'POST'])
