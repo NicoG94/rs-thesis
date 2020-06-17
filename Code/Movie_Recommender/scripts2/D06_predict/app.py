@@ -34,3 +34,4 @@ if __name__ == "__main__":
     from waitress import serve
     serve(app, host="0.0.0.0", port=args.port)
     # CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app | in Dockerfile
+
