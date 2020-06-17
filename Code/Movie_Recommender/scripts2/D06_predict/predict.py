@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Code/Movie_Recommender/scripts2/D06_predict/Dockerfile
 # https://realpython.com/python-sockets/
+"""
 
 import socket
 
@@ -24,3 +25,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("END")
 
 #df = pd.read_csv("gcp_data/rs_predictions/prepared_data.csv")
+"""
+import os
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    target = os.environ.get('TARGET', 'World')
+    return 'Hello {}!\n'.format(target)
+
+if __name__ == "__main__":
+    app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 8080)))
