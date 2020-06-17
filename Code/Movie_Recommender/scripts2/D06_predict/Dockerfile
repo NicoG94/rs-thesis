@@ -19,7 +19,7 @@ RUN mkdir pipreqs_folder
 RUN cp $pystep pipreqs_folder/$pystep
 RUN pipreqs pipreqs_folder
 RUN pip3 install -r pipreqs_folder/requirements.txt
-RUN pip install Flask gunicorn
+RUN pip3 install Flask gunicorn
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
 
 
