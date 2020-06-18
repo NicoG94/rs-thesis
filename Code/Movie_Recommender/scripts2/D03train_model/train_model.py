@@ -11,19 +11,22 @@ import os
 def train_model(df, make_cv=True, make_train_test_split=False, user_col="userId", item_col="imdbId", rating_col="rating"):
     reader = Reader(rating_scale=(1, 5))
     # df (Dataframe) – The d ataframe containing the ratings. It must have three columns, corresponding to the user (raw) ids, the item (raw) ids, and the ratings, in this order.
+    df[user_col]=df[user_col].astype(str)
+    df[item_col]=df[item_col].astype(str)
     data = Dataset.load_from_df(df[[user_col, item_col, rating_col]], reader)
 
     # data.raw_ratings[0]
 
-    algo = SVD()
+
 
     if make_train_test_split:
         trainset, testset = train_test_split(data, test_size=.25)
     else:
         trainset = data.build_full_trainset()
 
-
+    algo = SVD()
     algo.fit(trainset)
+    #trainset.to_raw_uid(1)
 
     if make_train_test_split:
         # predict ratings for the testset
@@ -38,30 +41,32 @@ def train_model(df, make_cv=True, make_train_test_split=False, user_col="userId"
     predictions = algo.test(trainset.build_testset())
 
     # sample pred
-    uid = str(4094)  # raw user id (as in the ratings file). They are **strings**!
+    uid = str(1)  # raw user id (as in the ratings file). They are **strings**!
     iid = str(114709)  # raw item id (as in the ratings file). They are **strings**!
-    pred = algo.predict(uid, iid, r_ui=4, verbose=True)
-    print(pred)
+    a=algo.predict(uid, iid, verbose=True)
 
     print("Algo trained")
     return algo
 
 def predict_dataset(df, model, user_col="userId", item_col="imdbId", rating_col="rating"):
-    reader = Reader(rating_scale=(1, 5))
-    data = Dataset.load_from_df(df[[user_col, item_col, rating_col]], reader)
-    trainset, testset = train_test_split(data, test_size=1.00)
-    predictions = model.test(testset)
+    #reader = Reader(rating_scale=(1, 5))
+    #data = Dataset.load_from_df(df[[user_col, item_col, rating_col]], reader)
+    #trainset, testset = train_test_split(data, test_size=1.00)
+    #predictions = model.test(testset)
+
+    predictions_long=[model.predict(str(user), str(item),verbose=False) for user in df[user_col].unique() for item in df[item_col].unique()]
 
     # predictions to pandas df
-    uids, iids, orig_ratings, preds, det=zip(*predictions)
+    uids, iids, orig_ratings, preds, det=zip(*predictions_long)
     predictionsDf = pd.DataFrame()
     predictionsDf["uid"] = uids
     predictionsDf["iids"] = iids
-    predictionsDf["orig_ratings"] = orig_ratings
     predictionsDf["preds"] = preds
-    predictionsDf["det"] = det
 
-    return predictionsDf
+    # merge orig ratings to preds
+    predictionsDf2 = pd.merge(predictionsDf, df, left_on=["uid", "iids"], right_on=[user_col, item_col], how="left")
+
+    return predictionsDf2[["uid", "iids", "preds", "rating"]]
 
 if __name__ == "__main__":
     print("Lets start V0.2.0")
@@ -83,12 +88,13 @@ if __name__ == "__main__":
 
     # read data
     # index="userId", columns="imdbId", values="rating"
-    df = pd.read_csv(args.input_path).head(1000)
-    #df = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv").head(1000)
+    df = pd.read_csv(args.input_path)
+    #df = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\prepared_data.csv")
 
     # train model
     print("start training")
     model = train_model(df, make_cv=args.make_cv, make_train_test_split=args.make_train_test_split)
+    #model = train_model(df)
 
     # predict train data
     predictionsDf = predict_dataset(df, model)
@@ -97,7 +103,7 @@ if __name__ == "__main__":
     Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
 
     # save model
-    #path=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\model.joblib"
+    #dump(model, r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\model.joblib", compress=3)
     dump(model, args.output_path_model, compress=3)
     print("model saved")
 
@@ -105,5 +111,5 @@ if __name__ == "__main__":
     print(f"Model has {file_mb} MB.")
 
     predictionsDf.to_csv(args.output_path_preds, index=False)
-    #predictionsDf.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv")
+    #predictionsDf.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv", index=False)
     print("Predictions saved")

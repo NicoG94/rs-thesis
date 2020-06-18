@@ -15,6 +15,7 @@ def push_all_images(origtag, repos):
         print(f"{repo} image pushed")
 
 if __name__ == "__main__":
+    # im terminal: docker build C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D06_predict
     origtag = "test3"
     repos={"get_data_image":r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
            "train_model_image":r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",

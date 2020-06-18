@@ -3,22 +3,20 @@ import argparse
 from pathlib import Path
 
 
-def prepare_data(df, nMostRated = None, nTopUser = None):
-    # take only top 1000 most rated movies
+def prepare_data(df, min_ratings_user = 20, min_ratings_items = 25):
+    # filter users & movies < 25 ratings and top 10 users
+    user_upper_limit = sorted(df.groupby("userId").count()["rating"], reverse=True)[10]
+    grouped_user = df.groupby("userId").count()["rating"]
+    keep_user = grouped_user[(grouped_user > min_ratings_user) & (grouped_user < user_upper_limit)].index
 
-    mostRatedMovieIds = df.groupby("imdbId").count().sort_values("userId", ascending=False).head(nMostRated).index
+    grouped_items = df.groupby("movieId").count()["rating"]
+    keep_items = grouped_items[(grouped_items > min_ratings_items)].index
 
-    dfMostRated = df[df["imdbId"].isin(mostRatedMovieIds)]
+    dfPrepared = df[df["movieId"].isin(keep_items)]
+    dfPrepared = dfPrepared[dfPrepared["userId"].isin(keep_user)]
 
-    if nTopUser is None:
-        mostRatedUserIds = df.groupby("userId").count().sort_values("rating", ascending=False).index
-    else:
-        mostRatedUserIds = df.groupby("userId").count().sort_values("rating", ascending=False)[10:nTopUser + 10].index
+    return dfPrepared
 
-    dfMostRated2 = dfMostRated[dfMostRated["userId"].isin(mostRatedUserIds)]
-
-    dfPivot = dfMostRated2.pivot(index="userId", columns="imdbId", values="rating")
-    return dfPivot
 
 if __name__ == "__main__":
     print("Lets start V0.1.5")
@@ -37,11 +35,15 @@ if __name__ == "__main__":
     #df = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv")
 
     # prepare data
-    df = prepare_data(df, nMostRated=100, nTopUser=100)
+    dfPrepared = prepare_data(df, min_ratings_user = 20, min_ratings_items = 25)
+
+    # pivot data
+    #dfPivot = dfPrepared.pivot(index="userId", columns="imdbId", values="rating")
+    #dfPivot.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\pivotedRatings.csv")
 
     # Creating the directory where the output file will be created (the directory may or may not exist).
     Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
 
     # save data
-    df.to_csv(args.output_path)
-    #df.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\prepared_data.csv")
+    dfPrepared.to_csv(args.output_path)
+    #dfPrepared.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\prepared_data.csv")

@@ -2,7 +2,8 @@ import os
 from flask import Flask, request
 import argparse
 
-#from predict import predict_new_user
+from predict import predict_new_user
+#from scripts2.D06_predict.predict import predict_new_user
 app = Flask(__name__)
 
 
@@ -14,11 +15,14 @@ def hello_world():
     if request.method == 'POST':
         # get data from post request
         # TODO: correct post & get format with request
-        data = {"test_key": "test_val"}
+        data = {'114709': 3, '113189': 1, '114746': 5}
 
         # predict new user
-
-        return data
+        preds = predict_new_user(newUser=data,
+                         #path_to_preds=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv",
+                         path_to_preds=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv",
+                         n_similar_users=25)
+        return preds
     else:
         target = os.environ.get('TARGET', 'World')
         return 'Hello {}!\n'.format(target)
