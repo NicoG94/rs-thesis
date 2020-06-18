@@ -6,6 +6,7 @@ from surprise import dump
 from scipy import spatial
 import os
 from google.cloud import storage
+import requests
 
 '''
 import sys
@@ -92,13 +93,20 @@ def rating(request):
         #imagesDf = read_gs_as_bytes_to_df(bucket_name, file_name)
 
     else:
-        imagesDf = pd.read_csv(r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\django_website\locallibrary\images.csv")[:16]
+        imagesDf = pd.read_csv(r"images.csv")[:16]
 
     imagesDf.index = imagesDf.index.map(str)
     imagesDf.tconst = imagesDf.tconst.astype(str)
     returnDict = {"imagesDict": imagesDf.to_dict(orient="index")}
 
     return render(request, 'rating.html', returnDict)
+
+def send_pred_request(newUser, pred_url):
+    r = requests.post(pred_url, json=newUser)
+    print(r.status_code)
+    pred_dict = r.json()
+    pred_dict = {k: v for k, v in sorted(pred_dict.items(), reverse=True, key=lambda item: item[1])}
+    return pred_dict
 
 def recommends(request):
     ''' function to show website and predict '''
@@ -115,21 +123,11 @@ def recommends(request):
     # newUser = {'114709': 3, '113189': 1, '114746': 5}
     newUser = {str(k.split("rating")[1]):int(v) for k, v in allRatingsToReturn.items()}
 
+    # recommendedMovies = {'111161': 4.409709068218141, '169547': 4.367181866449892, '468569': 4.354459999567657, '1375666': 4.328690624281592, '110912': 4.293088068918457, '73486': 4.284921929324779, '83658': 4.263682846128104, '137523': 4.251407378217174, '68646': 4.246141097451418, '211915': 4.243610261700572, '75314': 4.239882627616437, '110413': 4.207163161515406, '71853': 4.206800296604597, '119217': 4.19738925719694, '338013': 4.188895711550159, '108052': 4.180040213386975, '114814': 4.163534871252197, '78748': 4.131342352280687, '120815': 4.127784049119275, '102926': 4.12774532343936}
 
     # predict movies for user
-
-    # recommendedMovies = {'111161': 4.409709068218141, '169547': 4.367181866449892, '468569': 4.354459999567657, '1375666': 4.328690624281592, '110912': 4.293088068918457, '73486': 4.284921929324779, '83658': 4.263682846128104, '137523': 4.251407378217174, '68646': 4.246141097451418, '211915': 4.243610261700572, '75314': 4.239882627616437, '110413': 4.207163161515406, '71853': 4.206800296604597, '119217': 4.19738925719694, '338013': 4.188895711550159, '108052': 4.180040213386975, '114814': 4.163534871252197, '78748': 4.131342352280687, '120815': 4.127784049119275, '102926': 4.12774532343936}
-    if gcp:
-        bucket_name = "movie_data_2603"
-        file_name = "prepared_data/pivotedRatings.csv"
-        model_file = "models/simpleRS2"
-        pathToPivotData = 'gs://{}/{}'.format(bucket_name, file_name)
-        pathToModel = 'gs://{}/{}'.format(bucket_name, model_file)
-    else:
-        pathToPivotData = r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\prepared_data.csv"
-        pathToModel = r"C:/Users/nicog/OneDrive/3. Semester - Masterthesis/Code/Movie_Recommender/models/simpleRS2"
-
-    recommendedMovies = predict_new_user(newUser, pathToPivotData, pathToModel)
+    pred_url= "http://DESKTOP-LIQNDVB:8080"
+    recommendedMovies = send_pred_request(newUser, pred_url)
 
     # get return df
     recommendedMoviesDf = pd.DataFrame(recommendedMovies.values(), index=recommendedMovies.keys(), columns=["estRate"])
@@ -142,13 +140,10 @@ def recommends(request):
         file_name = "website_data/images.csv"
         imagesDf = pd.read_csv('gs://{}/{}'.format(bucket_name, file_name), index_col=0)
     else:
-        imagesDf = pd.read_csv(r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\django_website\locallibrary\images.csv", index_col="tconst")
+        imagesDf = pd.read_csv(r"imagess.csv", index_col="tconst")
     imagesDf.index = imagesDf.index.map(str)
     recommendedMoviesDfReturn = recommendedMoviesDf.merge(imagesDf, left_index=True, right_index=True).to_dict('index')
     returnDict["recommendedMoviesDfReturn"] = recommendedMoviesDfReturn
 
     return render(request, 'recommends.html', returnDict)
-
-
-
 

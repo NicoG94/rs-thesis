@@ -1,13 +1,16 @@
 import pandas as pd
 import requests
 
-links = pd.read_csv(r"C:\Users\nicog\Desktop\thesis_daten\grouplens\ml-latest\links.csv", index_col="imdbId")["tmdbId"]
+r"""links = pd.read_csv(r"C:\Users\nicog\Desktop\thesis_daten\grouplens\ml-latest\links.csv", index_col="imdbId")["tmdbId"]
 
 df = pd.read_csv("data/coll_filt_data.csv")
 # take only top 1000 most rated movies
 nMostRated = 100
 mostRatedMovieIdsImdb = df.groupby("imdbId").count().sort_values("userId", ascending = False).head(nMostRated).index
 dfMostRated = df[df["imdbId"].isin(mostRatedMovieIdsImdb)]
+"""
+dfMostRated = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv")
+
 
 def getDataFromTmdbApi(movieId):
     url = 'https://api.themoviedb.org/3/movie/{}?api_key=8a7e6043e512b2219a471b9bdfb78369'.format(movieId)
@@ -50,5 +53,5 @@ popularMovies2["imageurl"] = "http://image.tmdb.org/t/p/w1280" + popularMovies2[
 popularMovies2.drop(["index","tmdbId","posterPath"],axis=1,inplace=True)
 popularMovies2 = popularMovies2.rename(columns={'imdbId':"tconst", 'title': "moviename"})
 popularMovies2[["imageurl", "moviename", "tconst"]].to_csv(r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\django_website\locallibrary\images.csv", index = False)
-
+popularMovies2[["imageurl", "moviename", "tconst"]].to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\django_website\locallibrary\images.csv", index = False)
 

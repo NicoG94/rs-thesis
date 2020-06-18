@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request
 import argparse
+import json
 
 from predict import predict_new_user
 #from scripts2.D06_predict.predict import predict_new_user
@@ -14,13 +15,15 @@ def hello_world():
         return "GET"
     if request.method == 'POST':
         # get data from post request
+        data=json.loads(request.data)
+        print(data)
         # TODO: correct post & get format with request
-        data = {'114709': 3, '113189': 1, '114746': 5}
+        #data = {'114709': 3, '113189': 1, '114746': 5}
 
         # predict new user
         preds = predict_new_user(newUser=data,
-                         #path_to_preds=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv",
-                         path_to_preds=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv",
+                         #path_to_preds="/mnt/predictions.csv", # live use
+                         path_to_preds=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv", # local use
                          n_similar_users=25)
         return preds
     else:

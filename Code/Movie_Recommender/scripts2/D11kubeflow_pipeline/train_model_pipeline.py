@@ -113,7 +113,7 @@ repos = {"get_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recom
          "train_model_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
          #"prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
          }
-push_all_images(origtag=TAG, repos=repos)
+#push_all_images(origtag=TAG, repos=repos)
 
 #compiling the created pipeline
 pipelineConfig = dsl.PipelineConf()
