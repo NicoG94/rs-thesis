@@ -1,3 +1,4 @@
+print("Lets start V0.2.1")
 import pandas as pd
 import argparse
 from pathlib import Path
@@ -5,7 +6,8 @@ from surprise import SVD, Dataset, Reader
 from surprise.model_selection.split import train_test_split
 from surprise.model_selection import cross_validate
 from surprise import accuracy
-from sklearn.externals.joblib import dump
+#from sklearn.externals.joblib import dump
+from joblib import dump
 import os
 
 def train_model(df, make_cv=True, make_train_test_split=False, user_col="userId", item_col="imdbId", rating_col="rating"):
@@ -69,7 +71,7 @@ def predict_dataset(df, model, user_col="userId", item_col="imdbId", rating_col=
     return predictionsDf2[["uid", "iids", "preds", "rating"]]
 
 if __name__ == "__main__":
-    print("Lets start V0.2.0")
+
 
     # get arguments
     parser = argparse.ArgumentParser(description='My program description')
@@ -100,7 +102,8 @@ if __name__ == "__main__":
     predictionsDf = predict_dataset(df, model)
 
     # Creating the directory where the output file will be created (the directory may or may not exist).
-    Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.output_path_model).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.output_path_preds).parent.mkdir(parents=True, exist_ok=True)
 
     # save model
     #dump(model, r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\model.joblib", compress=3)

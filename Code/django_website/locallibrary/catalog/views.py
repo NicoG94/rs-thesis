@@ -8,92 +8,14 @@ import os
 from google.cloud import storage
 import requests
 
-'''
-import sys
-pathToCode = r"C:/Users/nicog/OneDrive/3. Semester - Masterthesis/Code/Movie_Recommender/scripts"
-sys.path.append(pathToCode)
-from scripts.S04Modelling import predict_new_user
-'''
 
-gcp=False
-#os.chdir("locallibrary")
-
-def init_gs():
-    pathToCredentials = "storage_credentials.json"
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = pathToCredentials
-
-def read_blob_gs(bucket_name, file_name):
-    client = storage.Client()
-    bucket = client.get_bucket(bucket_name)
-    blob = bucket.get_blob(file_name)
-    return blob
-
-def predict_new_user(newUser, pathToPivotData, pathToModel, n_similar_users = 20):
-    # TODO: make quicker - dask df?!
-    # load pivoted data
-    dfPivot = pd.read_csv(pathToPivotData, index_col=0)
-
-    # append new user to data
-    dfPivot = dfPivot.append(pd.DataFrame(newUser, index=['-99']))
-    dfPivot = dfPivot.fillna(0)  # dfPivot.mean(axis=0))
-    
-    # calculate distance to each existing user
-    # TODO: make quicker - numpy matrix ?! dask df?
-    userDistance = {}
-    for user in dfPivot.index:
-        userDistance[user] = spatial.distance.euclidean(dfPivot.loc['-99'], dfPivot.loc[user])
-
-    # get top n similar users
-    n = n_similar_users
-    similarUsers = sorted(userDistance.items(), reverse=True, key=lambda x: -x[1])[1:n + 1]
-    similarUsersKeys = [key[0] for key in similarUsers]
-
-    # load rs
-    _, loaded_algo = dump.load(pathToModel)
-
-    # get top movies for similar users
-    preds = {}
-    for user in similarUsersKeys:
-        preds[user] = {}
-        for movie in list(dfPivot):
-            preds[user][movie] = loaded_algo.predict(uid=str(user), iid=str(movie))[3]
-    predsDf = pd.DataFrame.from_dict(preds)
-
-    # get top movies from average from top movies for similar users
-    # TODO: add distance as weighting
-    recommendedMovies = predsDf.mean(axis=1).sort_values(ascending=False)[:20].to_dict()
-    print(recommendedMovies)
-    return recommendedMovies
 
 def index(request):
     return render(request, 'index.html')
 
-def read_gs_as_bytes_to_df(bucket_name, file_name, index_col=None):
-    blob = read_blob_gs(bucket_name, file_name)
-    data = blob.download_as_string()
-    from io import StringIO
-    s = str(data, 'utf-8')
-    data = StringIO(s)
-    df = pd.read_csv(data, index_col=index_col)
-    return df
-
 def rating(request):
     # read example data, hardcoded
-    if gcp:
-        init_gs()
-
-        print("HIIIIIIIER")
-        print(os.getcwd())
-        print(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
-
-        bucket_name = "movie_data_2603"
-        file_name = "website_data/images.csv"
-        imagesDf = pd.read_csv('gs://{}/{}'.format(bucket_name, file_name))[:16]
-        #print(imagesDf)
-        #imagesDf = read_gs_as_bytes_to_df(bucket_name, file_name)
-
-    else:
-        imagesDf = pd.read_csv(r"images.csv")[:16]
+    imagesDf = pd.read_csv(r"images.csv")[:16]
 
     imagesDf.index = imagesDf.index.map(str)
     imagesDf.tconst = imagesDf.tconst.astype(str)
@@ -110,8 +32,6 @@ def send_pred_request(newUser, pred_url):
 
 def recommends(request):
     ''' function to show website and predict '''
-    if gcp:
-        init_gs()
     # get user ratings
     allRatingsToReturn = {}
     allRatings = request.META['QUERY_STRING'].split("&")
@@ -135,12 +55,7 @@ def recommends(request):
     recommendedMoviesDf["estRate"] = round(recommendedMoviesDf["estRate"]/5*100,1)
 
     # append moviename & imagepath
-    if gcp:
-        bucket_name = "movie_data_2603"
-        file_name = "website_data/images.csv"
-        imagesDf = pd.read_csv('gs://{}/{}'.format(bucket_name, file_name), index_col=0)
-    else:
-        imagesDf = pd.read_csv(r"imagess.csv", index_col="tconst")
+    imagesDf = pd.read_csv(r"imagess.csv", index_col="tconst")
     imagesDf.index = imagesDf.index.map(str)
     recommendedMoviesDfReturn = recommendedMoviesDf.merge(imagesDf, left_index=True, right_index=True).to_dict('index')
     returnDict["recommendedMoviesDfReturn"] = recommendedMoviesDfReturn

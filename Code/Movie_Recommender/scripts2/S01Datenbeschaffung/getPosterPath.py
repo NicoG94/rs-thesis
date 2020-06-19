@@ -1,14 +1,6 @@
 import pandas as pd
 import requests
 
-r"""links = pd.read_csv(r"C:\Users\nicog\Desktop\thesis_daten\grouplens\ml-latest\links.csv", index_col="imdbId")["tmdbId"]
-
-df = pd.read_csv("data/coll_filt_data.csv")
-# take only top 1000 most rated movies
-nMostRated = 100
-mostRatedMovieIdsImdb = df.groupby("imdbId").count().sort_values("userId", ascending = False).head(nMostRated).index
-dfMostRated = df[df["imdbId"].isin(mostRatedMovieIdsImdb)]
-"""
 dfMostRated = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv")
 
 
@@ -35,15 +27,25 @@ def getTitleFromMovie(data):
         print("{} has error: {}".format(movieId, e))
         return ""
 
+def getAttributeFromMovie(data, attribute):
+    try:
+        title = data[attribute]
+        return title
+    except (KeyError, NameError) as e:
+        print("{} has error: {}".format(movieId, e))
+        return ""
 
 popularMovies = dfMostRated[["imdbId","tmdbId"]].drop_duplicates()
 
 movieData = {}
+attributes=["vote_count", "vote_average", "release_date", "popularity"]
 for movieId in popularMovies["tmdbId"]:
     movieData[movieId] = {}
     data = getDataFromTmdbApi(movieId)
     movieData[movieId]["posterPath"] = getImagePathFromMovie(data)
     movieData[movieId]["title"] = getTitleFromMovie(data)
+    for attribute in attributes:
+        movieData[movieId][attribute] = getAttributeFromMovie(data, attribute)
 
 movieDataDf = pd.DataFrame(movieData).transpose().reset_index()
 
@@ -52,6 +54,7 @@ popularMovies2 = popularMovies.merge(movieDataDf, left_on="tmdbId", right_on="in
 popularMovies2["imageurl"] = "http://image.tmdb.org/t/p/w1280" + popularMovies2["posterPath"]
 popularMovies2.drop(["index","tmdbId","posterPath"],axis=1,inplace=True)
 popularMovies2 = popularMovies2.rename(columns={'imdbId':"tconst", 'title': "moviename"})
-popularMovies2[["imageurl", "moviename", "tconst"]].to_csv(r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\django_website\locallibrary\images.csv", index = False)
-popularMovies2[["imageurl", "moviename", "tconst"]].to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\django_website\locallibrary\images.csv", index = False)
+colstokeep=["imageurl", "moviename", "tconst","vote_count", "vote_average", "release_date", "popularity"]
+popularMovies2[colstokeep].to_csv(r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\django_website\locallibrary\images.csv", index = False)
+popularMovies2[colstokeep].to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\django_website\locallibrary\images.csv", index = False)
 

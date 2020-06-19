@@ -76,7 +76,7 @@ def train_model_op(make_cv, make_train_test_split, input_path, output_path_model
     description='Train recommender modell pipeline'
 )
 # stitch the steps
-def train_recommender_model_pipeline(TAG:str, make_cv:bool=True, make_train_test_split:bool=True):
+def train_recommender_model_pipeline(TAG:str, make_cv:bool=True, make_train_test_split:bool=False):
     # set constant params
     pvc_path = "/mnt"
     # create persistent storage
@@ -108,12 +108,12 @@ def train_recommender_model_pipeline(TAG:str, make_cv:bool=True, make_train_test
                                        pred_pvc_path="/mnt/predictions.csv", gs_path="gs://rs_predictions")
 
 from scripts2.D99docker_setup.push_all_images import push_all_images
-TAG="test10"
+TAG="test16"
 repos = {"get_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
          "train_model_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
-         #"prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
+         "prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
          }
-#push_all_images(origtag=TAG, repos=repos)
+push_all_images(origtag=TAG, repos=repos)
 
 #compiling the created pipeline
 pipelineConfig = dsl.PipelineConf()
