@@ -31,6 +31,7 @@ def hello_world():
         return 'Hello {}!\n'.format(target)
 
 if __name__ == "__main__":
+    # python scripts2/D06_predict/app.py --port 8080
     parser = argparse.ArgumentParser(description='My program description')
     parser.add_argument('--port', type=str,
                         help='port')  # Paths should be passed in, not hardcoded

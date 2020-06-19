@@ -58,3 +58,14 @@ colstokeep=["imageurl", "moviename", "tconst","vote_count", "vote_average", "rel
 popularMovies2[colstokeep].to_csv(r"C:\Users\nicog\OneDrive\3. Semester - Masterthesis\Code\django_website\locallibrary\images.csv", index = False)
 popularMovies2[colstokeep].to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\django_website\locallibrary\images.csv", index = False)
 
+
+import numpy as np
+import pandas as pd
+popularMovies2 = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\django_website\locallibrary\images.csv")
+popularMovies2 = popularMovies2.replace("", np.nan)
+popularMovies2.isna().sum()
+popularMovies2 = popularMovies2.convert_dtypes()
+popularMovies2["popularity"] = popularMovies2["vote_count"].astype(float)
+popularMovies3=popularMovies2.sort_values("popularity", ascending=False).reset_index()
+popularMovies3.drop("index", axis=1, inplace=True)
+popularMovies3.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\django_website\locallibrary\images.csv", index = False)

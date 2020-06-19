@@ -114,7 +114,7 @@ h4 {
     <!-- !Movies! -->
     <div class="w3-row-padding w3-padding-16 w3-center" id="food">
     <form action="rate">
-
+    <input type = "submit" value="Give me recommendations!"/>
     {% for idx, movie in imagesDict.items %}
 
         {% with rating_name="rating"|add:movie.tconst %}
@@ -150,7 +150,7 @@ h4 {
 
         {% endwith %}
         {% endfor %}
-    <input type = "submit" value="Rate Me!"/>
+    <input type = "submit" value="Give me recommendations!"/>
     </form>
     </div>
 

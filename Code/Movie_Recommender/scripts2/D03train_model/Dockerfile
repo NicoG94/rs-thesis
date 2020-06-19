@@ -1,4 +1,6 @@
-FROM python:3
+FROM python:3.7
+RUN pip install numpy
+RUN pip install scikit-surprise
 ENV pystep=train_model.py
 ADD $pystep /
 COPY $pystep /$pystep

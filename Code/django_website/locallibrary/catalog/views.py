@@ -55,10 +55,12 @@ def recommends(request):
     recommendedMoviesDf["estRate"] = round(recommendedMoviesDf["estRate"]/5*100,1)
 
     # append moviename & imagepath
-    imagesDf = pd.read_csv(r"imagess.csv", index_col="tconst")
+    #imagesDf = pd.read_csv(r"locallibrary/images.csv", index_col="tconst")
+    imagesDf = pd.read_csv(r"images.csv", index_col="tconst")
     imagesDf.index = imagesDf.index.map(str)
-    recommendedMoviesDfReturn = recommendedMoviesDf.merge(imagesDf, left_index=True, right_index=True).to_dict('index')
-    returnDict["recommendedMoviesDfReturn"] = recommendedMoviesDfReturn
+    recommendedMoviesDfReturn = recommendedMoviesDf.merge(imagesDf, left_index=True, right_index=True)
+    recommendedMoviesDfReturn = recommendedMoviesDfReturn.sort_values("estRate", ascending=False).head(40)
 
+    returnDict["recommendedMoviesDfReturn"] = recommendedMoviesDfReturn.to_dict('index')
     return render(request, 'recommends.html', returnDict)
 

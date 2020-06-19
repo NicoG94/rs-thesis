@@ -108,7 +108,7 @@ def train_recommender_model_pipeline(TAG:str, make_cv:bool=True, make_train_test
                                        pred_pvc_path="/mnt/predictions.csv", gs_path="gs://rs_predictions")
 
 from scripts2.D99docker_setup.push_all_images import push_all_images
-TAG="test16"
+TAG="test25"
 repos = {"get_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
          "train_model_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
          "prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",

@@ -1,7 +1,7 @@
 import docker
 
-# docker image build --tag=rsthesis/get_data_image:test1 C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data
-# docker push rsthesis/get_data_image:test1
+# docker image build --tag=rsthesis/prepare_data_image:test21 C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data
+# docker push rsthesis/prepare_data_image:test21
 
 def push_all_images(origtag, repos):
     client = docker.from_env()
@@ -19,5 +19,6 @@ if __name__ == "__main__":
     origtag = "test3"
     repos={"get_data_image":r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D01get_data",
            "train_model_image":r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D03train_model",
+           "prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
            "predict_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D06_predict"}
     push_all_images(origtag, repos)
