@@ -14,7 +14,6 @@ def predict_new_user(newUser, path_to_preds, n_similar_users=20):
     end=time()
     print("Reading preds and getting pivoted data took {} seconds".format(end-start))
 
-
     # calculate distance to each existing user
     # TODO: make quicker - numpy matrix ?! dask df?
     start=time()
