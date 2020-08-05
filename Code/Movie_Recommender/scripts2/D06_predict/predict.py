@@ -58,7 +58,7 @@ def predict_new_user(newUser, path_to_preds, n_similar_users=20):
     known_items = [int(x) for x in newUser.keys()]
     weight_preds = weight_preds.drop(known_items)
 
-    end=time()
+    end=time() 
     print("Calculating the rest took {} seconds".format(end - start))
     return weight_preds.to_dict()["weight_pred"]
 

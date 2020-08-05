@@ -6,6 +6,7 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 RUN pip3 install numpy
 RUN pip3 install scikit-surprise
+RUN pip3 install gcsfs
 RUN apt-get -y install curl
 RUN curl https://storage.googleapis.com/rs_predictions/predictions.csv --output /mnt/predictions.csv
 RUN pip3 install Flask gunicorn
