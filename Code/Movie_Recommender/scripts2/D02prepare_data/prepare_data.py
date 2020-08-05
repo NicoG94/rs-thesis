@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 
-def prepare_data(df, min_ratings_user = 20, min_ratings_items = 25):
+def prepare_data(df, min_ratings_user = 20, min_ratings_items = 20):
     # filter users & movies < 25 ratings and top 10 users
     user_upper_limit = sorted(df.groupby("userId").count()["rating"], reverse=True)[10]
     grouped_user = df.groupby("userId").count()["rating"]

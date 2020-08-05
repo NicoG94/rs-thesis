@@ -5,6 +5,10 @@ import argparse
 from pathlib import Path
 from sklearn.externals.joblib import dump
 import os
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
 
 def train_model_and_predict(df, user_col="userId", item_col="imdbId", rating_col="rating"):
     scaler = MinMaxScaler()
@@ -130,14 +134,11 @@ if __name__ == "__main__":
 
     # read data
     # index="userId", columns="imdbId", values="rating"
-    df = pd.read_csv(args.input_path).head(1000)
+    df = pd.read_csv(args.input_path)#.head(1000)
     #df = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv").head(1000)
 
 
-    import numpy as np
-    import pandas as pd
-    import tensorflow as tf
-    from sklearn.preprocessing import MinMaxScaler
+
 
     df_orig = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv").head(1000)
     df = df_orig[["userId", "imdbId", "rating"]]

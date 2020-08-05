@@ -9,6 +9,7 @@ from surprise import accuracy
 #from sklearn.externals.joblib import dump
 from joblib import dump
 import os
+import time
 
 def train_model(df, make_cv=True, make_train_test_split=False, user_col="userId", item_col="imdbId", rating_col="rating"):
     reader = Reader(rating_scale=(1, 5))
@@ -95,9 +96,12 @@ if __name__ == "__main__":
 
     # train model
     print("start training")
+    start = time.time()
     model = train_model(df, make_cv=args.make_cv, make_train_test_split=args.make_train_test_split)
-    #model = train_model(df)
-
+    #model = train_model(df, make_cv=False, make_train_test_split=True)
+    end=time.time()
+    duration=(end-start)/60
+    print("Training took {} minutes".format(duration))
     # predict train data
     predictionsDf = predict_dataset(df, model)
 

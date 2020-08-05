@@ -10,7 +10,7 @@ def data_validation(df, file):
         assert list(df.columns) == ['userId', 'movieId', 'rating', 'timestamp']
 
 def main(request):
-    url_file="ml-latest-small"
+    url_file="ml-latest-small"#ml-latest
     url=f"http://files.grouplens.org/datasets/movielens/{url_file}.zip"
     resp = urlopen(url)
     zipfile = ZipFile(BytesIO(resp.read()))

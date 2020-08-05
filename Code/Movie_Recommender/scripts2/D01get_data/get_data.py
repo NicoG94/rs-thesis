@@ -19,11 +19,21 @@ if __name__ == "__main__":
     # read data
     ratings = pd.read_csv(args.input_path_ratings)
     links = pd.read_csv(args.input_path_links)
+    #ratings = pd.read_csv(r"C:\Users\nicog\Desktop\thesis_daten\grouplens\ml-latest\ratings.csv")
     #ratings = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\ml-latest-small\ratings.csv")
+    #links = pd.read_csv(r"C:\Users\nicog\Desktop\thesis_daten\grouplens\ml-latest\links.csv")
     #links = pd.read_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data_folder\ml-latest-small\links.csv")
+
+    # count movies & users
+    print(ratings["userId"].nunique())
+    print(ratings["movieId"].nunique())
 
     # merge data
     ratingsImbd = ratings.merge(links, on="movieId")
+
+    # count movies & users
+    print(ratingsImbd["userId"].nunique())
+    print(ratingsImbd["movieId"].nunique())
 
     # Creating the directory where the output file will be created (the directory may or may not exist).
     Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
@@ -31,4 +41,5 @@ if __name__ == "__main__":
     # save data
     ratingsImbd.to_csv(args.output_path, index=False)
     #ratingsImbd.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data.csv", index=False)
+    #ratingsImbd.to_csv(r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\merged_data_large.csv", index=False)
     print("DONE")
