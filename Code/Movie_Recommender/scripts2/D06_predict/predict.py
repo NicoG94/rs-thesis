@@ -63,9 +63,9 @@ def predict_new_user(newUser, path_to_preds, n_similar_users=20):
     return weight_preds.to_dict()["weight_pred"]
 
 if __name__ == "__main__":
-    newUser = {'114709': 3, '113189': 1, '114746': 5}
+    #newUser = {'114709': 3, '113189': 1, '114746': 5}
     #path_to_preds = r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv"
-    path_to_preds="gs://rs_predictions"
+    path_to_preds="gs://rs_predictions/predictions.csv"
     preds = predict_new_user(newUser, path_to_preds, n_similar_users=25)
 
 

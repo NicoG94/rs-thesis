@@ -22,9 +22,10 @@ def hello_world():
 
         # predict new user
         preds = predict_new_user(newUser=data,
-                         #path_to_preds="/mnt/predictions.csv", # live use
-                         path_to_preds=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv", # local use
-                         n_similar_users=25)
+                         #path_to_preds="/mnt/predictions.csv", # kfp use
+                         #path_to_preds=r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv", # local use
+                         path_to_preds="gs://rs_predictions/predictions.csv", # gcp use
+                         n_similar_users=20)
         return preds
     else:
         target = os.environ.get('TARGET', 'World')
