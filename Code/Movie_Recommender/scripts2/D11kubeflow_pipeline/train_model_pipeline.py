@@ -117,7 +117,7 @@ def train_recommender_model_pipeline(TAG:str, make_cv:bool=True, make_train_test
                                        pred_pvc_path="/mnt/predictions.csv", gs_path="gs://rs_predictions")
 
     # evaluate model
-    evaluate_model_op_task=evaluate_model_op(input_path="/mnt/predictions.csv", pvc_path=pvc_path, vol=train_model_op_task.volume,
+    evaluate_model_op_task=evaluate_model_op(input_path="/mnt/predictions.csv", pvc_path=pvc_path, vol=train_model_op_task.pvolume,
                                              TAG=TAG)
 
 from scripts2.D99docker_setup.push_all_images import push_all_images
@@ -127,7 +127,7 @@ repos = {"get_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recom
          "prepare_data_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D02prepare_data",
          "evaluate_model_image": r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\scripts2\D05_evaluate_model",
          }
-push_all_images(origtag=TAG, repos=repos)
+#push_all_images(origtag=TAG, repos=repos)
 
 #compiling the created pipeline
 pipelineConfig = dsl.PipelineConf()

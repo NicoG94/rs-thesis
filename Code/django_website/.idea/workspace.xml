@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="616fd4da-b0da-497c-92cc-a31dd4282bcf" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D03train_model/train_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D03train_model/train_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D06_predict/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D06_predict/predict.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D11kubeflow_pipeline/train_model_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/scripts2/D11kubeflow_pipeline/train_model_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Movie_Recommender/train_modell_pipeline3.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../Movie_Recommender/train_modell_pipeline3.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locallibrary.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/locallibrary/catalog/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/locallibrary/catalog/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +37,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Movie_Recommender" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">

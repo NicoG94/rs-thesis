@@ -64,7 +64,8 @@ def predict_new_user(newUser, path_to_preds, n_similar_users=20):
 
 if __name__ == "__main__":
     newUser = {'114709': 3, '113189': 1, '114746': 5}
-    path_to_preds = r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv"
+    #path_to_preds = r"C:\Users\nicog\Documents\rs-thesis\Code\Movie_Recommender\data\predictions.csv"
+    path_to_preds="gs://rs_predictions"
     preds = predict_new_user(newUser, path_to_preds, n_similar_users=25)
 
 

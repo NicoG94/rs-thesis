@@ -12,7 +12,7 @@ import os
 import time
 
 def train_model(df, make_cv=True, make_train_test_split=False, user_col="userId", item_col="imdbId", rating_col="rating"):
-    reader = Reader(rating_scale=(1, 5))
+    reader = Reader(rating_scale=(0.5, 5))
     # df (Dataframe) – The d ataframe containing the ratings. It must have three columns, corresponding to the user (raw) ids, the item (raw) ids, and the ratings, in this order.
     df[user_col]=df[user_col].astype(str)
     df[item_col]=df[item_col].astype(str)

@@ -47,6 +47,7 @@ def recommends(request):
 
     # predict movies for user
     pred_url= "http://DESKTOP-LIQNDVB:8080"
+    pred_url= "https://predict-test1706-o46f2towoq-ew.a.run.app"
     recommendedMovies = send_pred_request(newUser, pred_url)
 
     # get return df
