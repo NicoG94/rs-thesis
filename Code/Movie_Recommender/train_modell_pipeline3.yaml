@@ -1,0 +1,216 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: train-recommender-modell-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 0.5.1, pipelines.kubeflow.org/pipeline_compilation_time: '2020-08-07T15:29:17.784285',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "Train recommender modell
+      pipeline", "inputs": [{"default": "latest", "name": "TAG", "optional": true,
+      "type": "String"}, {"default": "True", "name": "make_cv", "optional": true,
+      "type": "Boolean"}, {"default": "False", "name": "make_train_test_split", "optional":
+      true, "type": "Boolean"}], "name": "Train recommender modell"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 0.5.1}
+spec:
+  entrypoint: train-recommender-modell
+  templates:
+  - name: create-pvc
+    resource:
+      action: create
+      manifest: |
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          name: '{{workflow.name}}-my-pvc'
+        spec:
+          accessModes:
+          - ReadWriteMany
+          resources:
+            requests:
+              storage: 5Gi
+    outputs:
+      parameters:
+      - name: create-pvc-manifest
+        valueFrom: {jsonPath: '{}'}
+      - name: create-pvc-name
+        valueFrom: {jsonPath: '{.metadata.name}'}
+      - name: create-pvc-size
+        valueFrom: {jsonPath: '{.status.capacity.storage}'}
+    metadata:
+      labels: {pipelines.kubeflow.org/pipeline-sdk-type: kfp}
+  - name: download-data
+    container:
+      args: ['gs://raw_movie_data', /mnt]
+      command: [gsutil, cp, -r]
+      image: google/cloud-sdk:295.0.0-slim
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+      imagePullPolicy: Always
+    inputs:
+      parameters:
+      - {name: create-pvc-name}
+    metadata:
+      labels: {pipelines.kubeflow.org/pipeline-sdk-type: kfp}
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  - name: evaluate-model
+    container:
+      args: [--input_path, /mnt/predictions.csv]
+      command: [python, evaluate_model.py]
+      image: rsthesis/evaluate_model_image:{{inputs.parameters.TAG}}
+      imagePullPolicy: Always
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+    inputs:
+      parameters:
+      - {name: TAG}
+      - {name: create-pvc-name}
+    metadata:
+      labels: {pipelines.kubeflow.org/pipeline-sdk-type: kfp}
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  - name: merge-data
+    container:
+      args: [--input_path_links, /mnt/raw_movie_data/links.csv, --input_path_ratings,
+        /mnt/raw_movie_data/ratings.csv, --output_path, /mnt/merged_data.csv]
+      command: [python, get_data.py]
+      image: rsthesis/get_data_image:{{inputs.parameters.TAG}}
+      imagePullPolicy: Always
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+    inputs:
+      parameters:
+      - {name: TAG}
+      - {name: create-pvc-name}
+    outputs:
+      artifacts:
+      - {name: merge-data-data_output, path: /mnt/merged_data.csv}
+    metadata:
+      labels: {pipelines.kubeflow.org/pipeline-sdk-type: kfp}
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  - name: prepare-data
+    container:
+      args: [--input_path, /tmp/inputs/input-0/data, --output_path, /mnt/prepared_data.csv]
+      command: [python, prepare_data.py]
+      image: rsthesis/prepare_data_image:{{inputs.parameters.TAG}}
+      imagePullPolicy: Always
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+    inputs:
+      parameters:
+      - {name: TAG}
+      - {name: create-pvc-name}
+      artifacts:
+      - {name: merge-data-data_output, path: /tmp/inputs/input-0/data}
+    outputs:
+      artifacts:
+      - {name: prepare-data-data_output, path: /mnt/prepared_data.csv}
+    metadata:
+      labels: {pipelines.kubeflow.org/pipeline-sdk-type: kfp}
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  - name: train-model-and-predict
+    container:
+      args: [--input_path, /mnt/prepared_data.csv, --output_path_model, /mnt/model.joblib,
+        --output_path_preds, /mnt/predictions.csv, --make_train_test_split, '{{inputs.parameters.make_train_test_split}}',
+        --make_cv, '{{inputs.parameters.make_cv}}']
+      command: [python, train_model.py]
+      image: rsthesis/train_model_image:{{inputs.parameters.TAG}}
+      imagePullPolicy: Always
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+    inputs:
+      parameters:
+      - {name: TAG}
+      - {name: create-pvc-name}
+      - {name: make_cv}
+      - {name: make_train_test_split}
+    outputs:
+      artifacts:
+      - {name: train-model-and-predict-data_output, path: /mnt/predictions.csv}
+      - {name: train-model-and-predict-model_output, path: /mnt/model.joblib}
+    metadata:
+      labels: {pipelines.kubeflow.org/pipeline-sdk-type: kfp}
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  - name: train-recommender-modell
+    inputs:
+      parameters:
+      - {name: TAG}
+      - {name: make_cv}
+      - {name: make_train_test_split}
+    dag:
+      tasks:
+      - {name: create-pvc, template: create-pvc}
+      - name: download-data
+        template: download-data
+        dependencies: [create-pvc]
+        arguments:
+          parameters:
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+      - name: evaluate-model
+        template: evaluate-model
+        dependencies: [create-pvc, train-model-and-predict]
+        arguments:
+          parameters:
+          - {name: TAG, value: '{{inputs.parameters.TAG}}'}
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+      - name: merge-data
+        template: merge-data
+        dependencies: [create-pvc, download-data]
+        arguments:
+          parameters:
+          - {name: TAG, value: '{{inputs.parameters.TAG}}'}
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+      - name: prepare-data
+        template: prepare-data
+        dependencies: [create-pvc, merge-data]
+        arguments:
+          parameters:
+          - {name: TAG, value: '{{inputs.parameters.TAG}}'}
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+          artifacts:
+          - {name: merge-data-data_output, from: '{{tasks.merge-data.outputs.artifacts.merge-data-data_output}}'}
+      - name: train-model-and-predict
+        template: train-model-and-predict
+        dependencies: [create-pvc, prepare-data]
+        arguments:
+          parameters:
+          - {name: TAG, value: '{{inputs.parameters.TAG}}'}
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+          - {name: make_cv, value: '{{inputs.parameters.make_cv}}'}
+          - {name: make_train_test_split, value: '{{inputs.parameters.make_train_test_split}}'}
+      - name: upload-preds
+        template: upload-preds
+        dependencies: [create-pvc, train-model-and-predict]
+        arguments:
+          parameters:
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+  - name: upload-preds
+    container:
+      args: [/mnt/predictions.csv, 'gs://rs_predictions']
+      command: [gsutil, cp, -r]
+      image: google/cloud-sdk:295.0.0-slim
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+      imagePullPolicy: Always
+    inputs:
+      parameters:
+      - {name: create-pvc-name}
+    metadata:
+      labels: {pipelines.kubeflow.org/pipeline-sdk-type: kfp}
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  arguments:
+    parameters:
+    - {name: TAG, value: latest}
+    - name: make_cv
+      value: "True"
+    - name: make_train_test_split
+      value: "False"
+  serviceAccountName: pipeline-runner
